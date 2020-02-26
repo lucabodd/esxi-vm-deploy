@@ -1,0 +1,244 @@
+################################################################################
+#
+# Questo playbook è da lanciare per fare il deploy automatico delle VM.
+# A questo scopo dovremo utilizzare una macchina debain target che si annuncerà in
+# broadcast sulla rete e aiuterà la VM vuota a installare debian fornendo all'installer i
+# files necessari
+#
+################################################################################
+
+---
+#-----------------------------------------+
+#          Check preflyght                |
+#-----------------------------------------+
+- hosts: vrt
+  tasks:
+  - name: "Collecting network information for ESXi host"
+    shell: esxcli network vswitch standard portgroup list | awk '{print $1,$2}' | grep -v "-" | grep -v Name
+    register: host_networks
+
+  - name: "Colletting datastore information for ESXi host"
+    shell: esxcli storage filesystem list | grep VMFS | awk '{print $2}'
+    register: host_datastores
+
+  - set_fact:
+      esxi_networks: "{{ host_networks.stdout_lines }}"
+      esxi_datastores: "{{ host_datastores.stdout_lines }}"
+  #    {{ hostvars[ansible_hostname]['esxi_networks'][0] }}
+
+  - name: "[INFO] The following information will help in the next steps... Available networks are:"
+    debug:
+      msg: "{{ host_networks.stdout_lines }}"
+
+  - name: "[INFO] The following information will help in the next steps... Available datastores are:"
+    debug:
+      msg: "{{ host_datastores.stdout_lines }}"
+
+#-----------------------------------------+
+#          Collecting vars                |
+#-----------------------------------------+
+- hosts: vrt
+  pre_tasks:
+  - assert:
+      that: vmname | length > 0
+      msg: "Name must be a valid string"
+
+  - assert:
+      that: "'{{ vmnet }}' in  {{ hostvars[ansible_hostname]['esxi_networks'] }}"
+      msg: "Invalid Network"
+
+  - assert:
+      that: "'{{ datastore }}' in  {{ hostvars[ansible_hostname]['esxi_datastores'] }}"
+      msg: "Invalid Network"
+
+  - assert:
+      that: ipaddress | ipaddr
+      msg: "Invalid IP address"
+
+  vars_prompt:
+  - name: vmname
+    prompt: "Enter new virtual machine name"
+    private: no
+
+  - name: nvmos
+    prompt: "Enter virtual machine OS type"
+    default: debian10-64
+    private: no
+
+  - name: vmvcpu
+    prompt: "Enter number of virtual CPUs"
+    default: 1
+    private: no
+
+  - name: nvmsize
+    prompt: "Enter disk size in GB"
+    default: 50
+    private: no
+
+  - name: vmmemsize
+    prompt: "Enter memory size in GB"
+    default: 16
+    private: no
+
+  - name: vmnet
+    prompt: "chose a value for virtual network, should match 'helper' machine virtual network, for network list, please see OUTPUT ABOVE"
+    private: no
+
+  - name: datastore
+    prompt: "chose a value for ESXi datastore, please see OUTPUT ABOVE"
+    private: no
+
+  - name: ipaddress
+    prompt: "chose an IP address for the virtual machine"
+    private: no
+
+  tasks:
+  - name: "Templating VM script on the remote ESXi server"
+    template:
+      src: ../roles/vm-deploy/templates/esxi/create-vm.sh
+      dest: /create-vm.sh
+
+  - name: "Executing Virtual Machine creation script"
+    command: sh ~/create-vm.sh
+    register: creation_output
+
+  - name: "Powering on VM in order to generate a mac address"
+    command: vim-cmd vmsvc/power.on "{{ creation_output.stdout_lines | last }}"
+
+  - name: "Retrieving virtual machine mac address"
+    shell: "vim-cmd vmsvc/device.getdevices {{ creation_output.stdout_lines | last }} | grep macA | awk '{ print $3 }' | sed 's/:/-/g' | sed 's/\"//g' | sed 's/,//'"
+    register: mac_addr
+
+  - name: "Powering off Virtual machine"
+    command: vim-cmd vmsvc/power.off "{{ creation_output.stdout_lines | last }}"
+
+  - set_fact:
+      vm_name: "{{ vmname }}"
+      vm_id: "{{ creation_output.stdout_lines | last }}"
+      vm_mac_addr: "{{ mac_addr.stdout }}"
+      vm_ipaddr: "{{ ipaddress }}"
+
+#-----------------------------------------+
+#         Helper server deployment        |
+#-----------------------------------------+
+- hosts: debian
+  become: true
+  tasks:
+
+  - name: Installing required packages
+    apt:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - zlib1g-dev
+      - libffi-dev
+  #-----------------------+
+  # Setting up python env |
+  #-----------------------+
+  - name: Calling build-python role ...
+    import_role:
+      name: ../../roles/build-python
+    vars:
+      python_version: 3.7.4
+
+  - name: "Downloading numpy library"
+    get_url:
+      url: http://aptmirror.kaleyra.com/python/pypi/numpy-1.17.2-cp37-cp37m-manylinux1_x86_64.whl
+      dest: /tmp/
+
+  - name: "installing numpy"
+    command: pip3.7 install /tmp/numpy-1.17.2-cp37-cp37m-manylinux1_x86_64.whl
+
+  - name: "Downloading netifaces module for python"
+    unarchive:
+      src: http://aptmirror.kaleyra.com/python/pypi/netifaces-0.10.9.tar.gz
+      dest: /tmp/
+      remote_src: yes
+
+  - name: "Installing netifaces"
+    shell: python3.7 setup.py install
+    args:
+      chdir: /tmp/netifaces-0.10.9/
+  #-----------------------+
+  # uplo. & templ. server |
+  #-----------------------+
+  - name: "Uploading BOOTP/TFTP/PXE python server on the remote helper"
+    synchronize:
+      src: ../roles/vm-deploy/files/linux/pybootd/
+      dest: /dev/shm/pybootd/
+
+  #getting net info from the helper machine
+  - name: "Netinfo: get network gateway"
+    shell: cat /etc/network/interfaces | grep gateway | awk '{ print $2 }' | awk -F "/" '{ print $1 }'
+    register: net_gateway
+
+  - name: "Netinfo: get helper address"
+    shell: cat /etc/network/interfaces | grep address | awk '{ print $2 }' | awk -F "/" '{ print $1 }'
+    register: helper_address
+
+  - name: "Netinfo: get network nameservers"
+    shell: cat /etc/resolv.conf | grep name | awk '{print $2}' | head -1
+    register: net_dns
+
+  - name: "Netinfo: get search address"
+    shell: cat /etc/resolv.conf | grep search | awk '{print $2}'
+    register: net_domain
+
+  #templating server configuration files with collected information
+  - name: "templating DHCP server configuration file"
+    template:
+      src: ../roles/vm-deploy/templates/linux/etc/pybootd.ini
+      dest: /dev/shm/pybootd/pybootd/etc/pybootd.ini
+
+  - name: "templating syslinux configuration file"
+    template:
+      src: ../roles/vm-deploy/templates/linux/etc/pxe.cfg
+      dest: /dev/shm/pybootd/pybootd/etc/pxe.cfg
+
+  # starting server
+  - name: "Starting the server on the helper machine"
+    shell: "(python3.7 /dev/shm/pybootd/pybootd.py -c /dev/shm/pybootd/pybootd/etc/pybootd.ini &)"
+    async: 45
+    poll: 0
+
+#-----------------------------------------+
+#         Installing Debian               |
+#-----------------------------------------+
+- hosts: vrt
+  tasks:
+  - name: "Powering on virtual machine"
+    shell: vim-cmd vmsvc/power.on "{{ hostvars[ansible_hostname]['vm_id'] }}"
+
+#-----------------------------------------+
+#               Cleaning Up               |
+#-----------------------------------------+
+- hosts: debian
+  become: true
+  tasks:
+  - pause:
+      minutes: 2
+      prompt: "Wainting to serving preseed file before cleaning up..."
+
+  - name: "looking for server pid"
+    shell: ps aux | grep pybootd.py | grep -v grep | awk '{ print $2 }'
+    register: pybootd_pid
+
+  - name: "killing the server"
+    command: kill -9 "{{ pybootd_pid.stdout }}"
+
+  - name: "removing python files"
+    file:
+      path: "{{ item }}"
+      state: absent
+    with_items:
+      - /tmp/Python-3.7.4/
+      - /tmp/numpy-1.17.2-cp37-cp37m-manylinux1_x86_64.whl
+      - /tmp/netifaces-0.10.9/
+      - /dev/shm/pybootd/
+
+- hosts: vrt
+  tasks:
+  - name: "cleaning up files on ESXi host"
+    file:
+      path: ~/create-vm.sh
+      state: absent
