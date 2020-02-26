@@ -1,0 +1,8 @@
+- hosts: vrt
+  gather_facts: no
+  tasks:
+  - name: "Collecting network information for ESXi host"
+    shell: esxcli network vswitch standard portgroup list | awk '{print $1,$2}' | grep -v "-" | grep -v Name
+
+  - name: "Colletting datastore information for ESXi host"
+    shell: esxcli storage filesystem list | grep VMFS | awk '{print $2}'
