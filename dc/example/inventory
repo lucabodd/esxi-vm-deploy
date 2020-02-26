@@ -1,2 +1,5 @@
-[siem]
-alienvault-01
+[vrt]
+hqit-vrt-04
+
+[debian]
+hqit-morfeo-01
