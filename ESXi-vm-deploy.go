@@ -6,6 +6,8 @@ import (
 	"fmt"
 	ansibler "github.com/apenella/go-ansible"
 	"bytes"
+	"strings"
+	"github.com/tidwall/gjson"
 )
 
 func main() {
@@ -50,7 +52,13 @@ func main() {
 		}
 		err := playbook.Run()
 		check(err)
-		fmt.Println(stdout.String())
+		json_stdout := strings.Replace(stdout.String(), "=>", "", -1)
+		json_stdout = strings.Replace(json_stdout, json_stdout[len(json_stdout)-23:], "", -1)
+		esxi_vmnet := gjson.Get(json_stdout, "plays.0.tasks.0.hosts.*.stdout_lines")
+		esxy_vmnet := esxi_vmnet.Array()
+		esxy_datastores := gjson.Get(json_stdout, "plays.0.tasks.1.hosts.*.stdout_lines")
+		esxy_datastores := esxy_datastores.Array()
+
 	}
 }
 
