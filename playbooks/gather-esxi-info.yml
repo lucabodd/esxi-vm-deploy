@@ -1,4 +1,4 @@
-- hosts: vrt
+- hosts: all
   gather_facts: no
   tasks:
   - name: "Collecting network information for ESXi host"
