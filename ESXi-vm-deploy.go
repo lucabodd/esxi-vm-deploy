@@ -9,6 +9,8 @@ import (
 	"bytes"
 	"strings"
 	"github.com/tidwall/gjson"
+	"bufio"
+	"strconv"
 )
 
 func main() {
@@ -19,13 +21,15 @@ func main() {
 	//vars
 	var conf string
 	var esxi_host string
+	var vm_net string
+	var vm_datastore string
+	reader := bufio.NewReader(os.Stdin)
 
 	/*vm_name := flag.String("vm-name", "", "Specify virtual machine name")
 	vm_os := flag.String("vm-os", "debian10-64", "Specify virtual machine OS")
 	vm_cpu := flag.Int("cpu", 1, "Specify virtual machine CPU")
 	vm_disk_size := flag.Int("disk-size", 50, "Specify .vmdk size")
 	vm_ram := flag.Int("ram", 16, "Specify RAM size")
-	vm_net := flag.String("vm-net", "", "Specify virtual network")
 	vm_ipv4 := flag.String("ip", "", "Virtual machine IP address")
 	*/
 	flag.StringVar(&conf, "c", "", "Specify the configuration file.")
@@ -64,8 +68,40 @@ func main() {
 		esxi_datastores := gjson.Get(json_stdout, "plays.0.tasks.1.hosts.*.stdout_lines")
 		datastores := esxi_datastores.Array()
 
-		fmt.Println(vmnets)
-		fmt.Println(datastores)
+		//VMNET selection
+		if len(vmnets) == 1 {
+			vm_net = vmnets[0].Str
+			log.Println("[+] Only 1 available networks found, selecting "+ vm_net)
+		} else {
+			log.Println("[*] Found more than one virtual network, choose where you want to deploy VM")
+			fmt.Println("Available networks:")
+			for index,element := range vmnets {
+				fmt.Println(index,"-",element)
+			}
+			fmt.Print("Insert ID: ")
+			in, _ := reader.ReadString('\n')
+			id, _ := strconv.Atoi(in)
+			vm_net = vmnets[id].Str
+		}
+		//DATASTORE selection
+		if len(datastores) == 1 {
+			vm_datastore = datastores[0].Str
+			log.Println("[+] Only 1 available datastore found, selecting "+ vm_datastore)
+		} else {
+			log.Println("[*] Found more than one datastore, choose where you want to deploy VM")
+			fmt.Println("Available datastores:")
+			for index,element := range datastores {
+				fmt.Println(index,"-",element)
+			}
+			fmt.Print("Insert ID: ")
+			in, _ := reader.ReadString('\n')
+			id, _ := strconv.Atoi(in)
+			vm_datastore = datastores[id].Str
+		}
+
+
+		fmt.Println(vm_net)
+		fmt.Println(vm_datastore)
 
 	}
 }
@@ -75,4 +111,8 @@ func check(e error) {
 		fmt.Println(e)
 		panic(e)
 	}
+}
+func kill(reason string) {
+	fmt.Println(reason)
+	os.Exit(1)
 }
