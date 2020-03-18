@@ -9,32 +9,6 @@
 
 ---
 #-----------------------------------------+
-#          Check preflyght                |
-#-----------------------------------------+
-- hosts: vrt
-  tasks:
-  - name: "Collecting network information for ESXi host"
-    shell: esxcli network vswitch standard portgroup list | awk '{print $1,$2}' | grep -v "-" | grep -v Name
-    register: host_networks
-
-  - name: "Colletting datastore information for ESXi host"
-    shell: esxcli storage filesystem list | grep VMFS | awk '{print $2}'
-    register: host_datastores
-
-  - set_fact:
-      esxi_networks: "{{ host_networks.stdout_lines }}"
-      esxi_datastores: "{{ host_datastores.stdout_lines }}"
-  #    {{ hostvars[ansible_hostname]['esxi_networks'][0] }}
-
-  - name: "[INFO] The following information will help in the next steps... Available networks are:"
-    debug:
-      msg: "{{ host_networks.stdout_lines }}"
-
-  - name: "[INFO] The following information will help in the next steps... Available datastores are:"
-    debug:
-      msg: "{{ host_datastores.stdout_lines }}"
-
-#-----------------------------------------+
 #          Collecting vars                |
 #-----------------------------------------+
 - hosts: vrt
