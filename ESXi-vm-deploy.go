@@ -21,25 +21,36 @@ func main() {
 	//vars
 	var conf string
 	var esxi_host string
+	var vm_name string
+	var vm_os string
 	var vm_net string
 	var vm_datastore string
+	var vm_cpu string
+	var vm_ram string
+	var vm_ipv4 string
+	var vm_disk_size string
+	var helper_host string
 	reader := bufio.NewReader(os.Stdin)
 
-	/*vm_name := flag.String("vm-name", "", "Specify virtual machine name")
-	vm_os := flag.String("vm-os", "debian10-64", "Specify virtual machine OS")
-	vm_cpu := flag.Int("cpu", 1, "Specify virtual machine CPU")
-	vm_disk_size := flag.Int("disk-size", 50, "Specify .vmdk size")
-	vm_ram := flag.Int("ram", 16, "Specify RAM size")
-	vm_ipv4 := flag.String("ip", "", "Virtual machine IP address")
-	*/
+	//Flag parsing
 	flag.StringVar(&conf, "c", "", "Specify the configuration file.")
 	flag.StringVar(&esxi_host, "esxi", "", "Specify ESXi Host")
-	/*
-	helper_host := flag.String("helper", "", "Specify helper host")
-	ip_automatic_lookup := flag.Bool("ip-automatic-lookup", false, "Specify if script should seek for an unallocated IP address")
-	*/
+	flag.StringVar(&vm_name, "vm-name", "", "Specify virtual machine name")
+	flag.StringVar(&vm_os, "vm-os", "debian10-64", "Specify virtual machine OS")
+	flag.StringVar(&vm_ram, "vm-ram", "16", "Specify RAM size")
+	flag.StringVar(&vm_cpu, "vm-cpu", "2", "Specify RAM size")
+	flag.StringVar(&vm_ipv4, "vm-ip", "", "Virtual machine IP address")
+	flag.StringVar(&vm_disk_size, "vm-disk-size", "50", "Virtual machine IP address")
+	flag.StringVar(&helper_host, "helper", "", "Virtual machine IP address")
+	flag.BoolVar(&help, "help", false, "prints this help message")
     flag.Parse()
+	if help {
+		flag.PrintDefaults()
+		kill("ERR: NOT ENAUGH ARGS")
+	}
+	//end of flag parsing
 
+	//check if configuration file is provided
 	if conf != "" {
 		file, err := os.Open(conf)
 		check(err)
@@ -98,12 +109,9 @@ func main() {
 			id, _ := strconv.Atoi(in)
 			vm_datastore = datastores[id].Str
 		}
-
-
-		fmt.Println(vm_net)
-		fmt.Println(vm_datastore)
-
 	}
+
+	//
 }
 
 func check(e error) {
