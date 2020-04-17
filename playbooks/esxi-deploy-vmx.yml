@@ -1,0 +1,22 @@
+#-----------------------------------------+
+#          Collecting vars                |
+#-----------------------------------------+
+- hosts: all
+  tasks:
+  - name: "Templating VM script on the remote ESXi server"
+    template:
+      src: ../roles/vm-deploy/templates/esxi/create-vm.sh
+      dest: /create-vm.sh
+
+  - name: "Executing Virtual Machine creation script"
+    command: sh ~/create-vm.sh
+    register: creation_output
+
+  - name: "Powering on VM in order to generate a mac address"
+    command: vim-cmd vmsvc/power.on "{{ creation_output.stdout_lines | last }}"
+
+  - name: "Retrieving virtual machine mac address"
+    shell: "vim-cmd vmsvc/device.getdevices {{ creation_output.stdout_lines | last }} | grep macA | awk '{ print $3 }' | sed 's/:/-/g' | sed 's/\"//g' | sed 's/,//'"
+
+  - name: "Powering off Virtual machine"
+    command: vim-cmd vmsvc/power.off "{{ creation_output.stdout_lines | last }}"

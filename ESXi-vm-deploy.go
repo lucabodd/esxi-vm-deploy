@@ -30,6 +30,7 @@ func main() {
 	var vm_ipv4 string
 	var vm_disk_size string
 	var helper_host string
+	var help bool
 	reader := bufio.NewReader(os.Stdin)
 
 	//Flag parsing
@@ -50,6 +51,11 @@ func main() {
 	}
 	//end of flag parsing
 
+	/*
+	############################################################################
+	#							VARS COLLECTION 							   #
+	############################################################################
+	*/
 	//check if configuration file is provided
 	if conf != "" {
 		file, err := os.Open(conf)
@@ -110,8 +116,46 @@ func main() {
 			vm_datastore = datastores[id].Str
 		}
 	}
-
-	//
+	/*
+	############################################################################
+	#							VARS COLLECTION END 						   #
+	############################################################################
+	*/
+	/*
+	############################################################################
+	#							VMX DEPLOYMENT  							   #
+	############################################################################
+	*/
+	log.Println("[+] RA passed, deploying .vmx")
+	log.Println("[*] Retrieveing VM mac address")
+	ansiblePlaybookConnectionOptions := &ansibler.AnsiblePlaybookConnectionOptions{}
+	ansiblePlaybookOptions := &ansibler.AnsiblePlaybookOptions{
+		Inventory: esxi_host+",",
+		ExtraVars: map[string]interface{}{
+			"vm_name": vm_name,
+			"vm_os": vm_os,
+			"vm_cpu": vm_cpu,
+			"vm_disk_size": vm_disk_size,
+			"vm_ram": vm_ram,
+			"vm_net": vm_net,
+			"vm_datastore": vm_datastore,
+		},
+	}
+	stdout := new(bytes.Buffer)
+	playbook := &ansibler.AnsiblePlaybookCmd{
+		Playbook:          "playbooks/esxi-deploy-vmx.yml",
+		ConnectionOptions: ansiblePlaybookConnectionOptions,
+		Options:           ansiblePlaybookOptions,
+		ExecPrefix:        "",
+		Writer:				stdout,
+	}
+	err := playbook.Run()
+	check(err)
+	json_stdout := strings.Replace(stdout.String(), "=>", "", -1)
+	json_stdout = strings.Replace(json_stdout, json_stdout[len(json_stdout)-24:], "", -1)
+	mac_stdout := gjson.Get(json_stdout, "plays.0.tasks.4.hosts.*.stdout")
+	vm_mac_addr := mac_stdout.String()
+	log.Println("[+] Got physical address: "+vm_mac_addr)
 }
 
 func check(e error) {

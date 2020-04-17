@@ -15,17 +15,17 @@
 #--------------------------------------------------------------
 ###############################################################
 ### Default Variable settings - change this to your preferences
-NVM="{{ vmname  }}"
+NVM="{{ vm_name  }}"
 NVMDIR=$NVM
 #NVM OS example
 #debain10-64
-NVMOS="{{ nvmos }}"
-VMVCPU="{{ vmvcpu  }}"
-NVMSIZE="{{ nvmsize  }}g" # Size of Virtual Machine Disk
-VMMEMSIZE={{ vmmemsize  }} # Default Memory Size In GB
+NVMOS="{{ vm_os }}"
+VMVCPU="{{ vm_cpu  }}"
+NVMSIZE="{{ vm_disk_size  }}g" # Size of Virtual Machine Disk
+VMMEMSIZE={{ vm_ram  }} # Default Memory Size In GB
 VMMEMSIZE=$(( $VMMEMSIZE*1024  ))
-VMNET="{{ vmnet }}"
-STORAGEDIR="/vmfs/volumes/{{ datastore }}"
+VMNET="{{ vm_net }}"
+STORAGEDIR="/vmfs/volumes/{{ vm_datastore }}"
 ### End Variable Declaration
 
 

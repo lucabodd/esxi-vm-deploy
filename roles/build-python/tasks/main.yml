@@ -1,0 +1,33 @@
+---
+# Add check if python exists
+- name: "check if python is installed"
+  shell: python3 --version | awk '{print $2}'
+  register: installed_version
+
+- debug:
+    msg: "{{installed_version}}"
+
+- name: "Downloading python"
+  unarchive:
+    src: "http://aptmirror.kaleyra.com/python/Python-{{ python_version }}.tgz"
+    dest: /tmp/
+    remote_src: yes
+  when: "installed_version.stdout != python_version"
+
+- name: "Python: Configuring..."
+  shell: "/tmp/Python-{{ python_version }}/configure"
+  args:
+    chdir: "/tmp/Python-{{ python_version }}/"
+    creates: install.log
+  when: "installed_version.stdout != python_version"
+
+- name: "Python: Build the default target. This will take a while"
+  make:
+    chdir: "/tmp/Python-{{ python_version }}"
+  when: "installed_version.stdout != python_version"
+
+- name: "Python: Install the default target"
+  make:
+    chdir: "/tmp/Python-{{ python_version }}"
+    target: install
+  when: "installed_version.stdout != python_version"
