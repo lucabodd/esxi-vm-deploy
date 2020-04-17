@@ -20,3 +20,11 @@
 
   - name: "Powering off Virtual machine"
     command: vim-cmd vmsvc/power.off "{{ creation_output.stdout_lines | last }}"
+
+  - name: "Echoing vmid"
+    shell: echo "{{ creation_output.stdout_lines | last }}"
+
+  - name: "cleaning up files on ESXi host"
+    file:
+      path: ~/create-vm.sh
+      state: absent

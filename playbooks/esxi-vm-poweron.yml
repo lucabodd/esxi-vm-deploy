@@ -1,0 +1,4 @@
+- hosts: all
+  tasks:
+  - name: "Powering on virtual machine"
+    shell: vim-cmd vmsvc/power.on "{{ vm_id }}"

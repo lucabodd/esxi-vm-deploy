@@ -1,17 +1,4 @@
-################################################################################
-#
-# Questo playbook è da lanciare per fare il deploy automatico delle VM.
-# A questo scopo dovremo utilizzare una macchina debain target che si annuncerà in
-# broadcast sulla rete e aiuterà la VM vuota a installare debian fornendo all'installer i
-# files necessari
-#
-################################################################################
-
----
-#-----------------------------------------+
-#         Helper server deployment        |
-#-----------------------------------------+
-- hosts: debian
+- hosts: all
   become: true
   tasks:
 
@@ -90,45 +77,3 @@
     shell: "(python3.7 /dev/shm/pybootd/pybootd.py -c /dev/shm/pybootd/pybootd/etc/pybootd.ini &)"
     async: 45
     poll: 0
-
-#-----------------------------------------+
-#         Installing Debian               |
-#-----------------------------------------+
-- hosts: vrt
-  tasks:
-  - name: "Powering on virtual machine"
-    shell: vim-cmd vmsvc/power.on "{{ hostvars[ansible_hostname]['vm_id'] }}"
-
-#-----------------------------------------+
-#               Cleaning Up               |
-#-----------------------------------------+
-- hosts: debian
-  become: true
-  tasks:
-  - pause:
-      minutes: 2
-      prompt: "Wainting to serving preseed file before cleaning up..."
-
-  - name: "looking for server pid"
-    shell: ps aux | grep pybootd.py | grep -v grep | awk '{ print $2 }'
-    register: pybootd_pid
-
-  - name: "killing the server"
-    command: kill -9 "{{ pybootd_pid.stdout }}"
-
-  - name: "removing python files"
-    file:
-      path: "{{ item }}"
-      state: absent
-    with_items:
-      - /tmp/Python-3.7.4/
-      - /tmp/numpy-1.17.2-cp37-cp37m-manylinux1_x86_64.whl
-      - /tmp/netifaces-0.10.9/
-      - /dev/shm/pybootd/
-
-- hosts: vrt
-  tasks:
-  - name: "cleaning up files on ESXi host"
-    file:
-      path: ~/create-vm.sh
-      state: absent

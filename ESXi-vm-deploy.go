@@ -11,6 +11,8 @@ import (
 	"github.com/tidwall/gjson"
 	"bufio"
 	"strconv"
+	"github.com/schollz/progressbar"
+	"time"
 )
 
 func main() {
@@ -70,7 +72,7 @@ func main() {
 		}
 		stdout := new(bytes.Buffer)
 		playbook := &ansibler.AnsiblePlaybookCmd{
-			Playbook:          "playbooks/gather-esxi-info.yml",
+			Playbook:          "playbooks/esxi-gather-info.yml",
 			ConnectionOptions: ansiblePlaybookConnectionOptions,
 			Options:           ansiblePlaybookOptions,
 			ExecPrefix:        "",
@@ -126,8 +128,8 @@ func main() {
 	#							VMX DEPLOYMENT  							   #
 	############################################################################
 	*/
-	log.Println("[+] RA passed, deploying .vmx")
-	log.Println("[*] Retrieveing VM mac address")
+	log.Println("[+] RA passed, deploying .vmx and allocating disk space (thick)")
+	log.Println("[*] Deploying .vmx file")
 	ansiblePlaybookConnectionOptions := &ansibler.AnsiblePlaybookConnectionOptions{}
 	ansiblePlaybookOptions := &ansibler.AnsiblePlaybookOptions{
 		Inventory: esxi_host+",",
@@ -151,11 +153,117 @@ func main() {
 	}
 	err := playbook.Run()
 	check(err)
+	log.Println("[+] Virtual machine created. disk initialization completed")
+	log.Println("[*] Retrieveing VM mac address")
+	log.Println("[*] Retrieveing Assigned VM Hypervisor ID")
 	json_stdout := strings.Replace(stdout.String(), "=>", "", -1)
 	json_stdout = strings.Replace(json_stdout, json_stdout[len(json_stdout)-24:], "", -1)
 	mac_stdout := gjson.Get(json_stdout, "plays.0.tasks.4.hosts.*.stdout")
 	vm_mac_addr := mac_stdout.String()
+	id_stdout := gjson.Get(json_stdout, "plays.0.tasks.6.hosts.*.stdout")
+	vm_id := id_stdout.String()
 	log.Println("[+] Got physical address: "+vm_mac_addr)
+	log.Println("[+] Got VMID: "+vm_id)
+	/*
+	############################################################################
+	#							VMX DEPLOYMENT - END						   #
+	############################################################################
+	*/
+	/*
+	############################################################################
+	#							PYBOOTD  DEPLOYMENT 						   #
+	############################################################################
+	*/
+	log.Println("[*] uploading BOOTP server")
+	ansiblePlaybookConnectionOptions = &ansibler.AnsiblePlaybookConnectionOptions{}
+	ansiblePlaybookOptions = &ansibler.AnsiblePlaybookOptions{
+		Inventory: helper_host+",",
+		ExtraVars: map[string]interface{}{
+			"vm_ipv4": vm_ipv4,
+			"vm_mac_addr": vm_mac_addr,
+			"helper_host": helper_host,
+			"vm_name": vm_name,
+		},
+	}
+	stdout = new(bytes.Buffer)
+	playbook = &ansibler.AnsiblePlaybookCmd{
+		Playbook:          "playbooks/bootp-server-deploy.yml",
+		ConnectionOptions: ansiblePlaybookConnectionOptions,
+		Options:           ansiblePlaybookOptions,
+		ExecPrefix:        "",
+		Writer:				stdout,
+	}
+	err = playbook.Run()
+	json_stdout = strings.Replace(stdout.String(), "=>", "", -1)
+	json_stdout = strings.Replace(json_stdout, json_stdout[len(json_stdout)-24:], "", -1)
+	fmt.Println(json_stdout)
+	log.Println("[+] BOOTP server running")
+	/*
+	############################################################################
+	#							PYBOOTD  DEPLOYMENT END						   #
+	############################################################################
+	*/
+	/*
+	############################################################################
+	#							VM POWERUP     		 						   #
+	############################################################################
+	*/
+	log.Println("[*] Powering up VM")
+	ansiblePlaybookConnectionOptions = &ansibler.AnsiblePlaybookConnectionOptions{}
+	ansiblePlaybookOptions = &ansibler.AnsiblePlaybookOptions{
+		Inventory: esxi_host+",",
+		ExtraVars: map[string]interface{}{
+			"vm_id": vm_id,
+		},
+	}
+	stdout = new(bytes.Buffer)
+	playbook = &ansibler.AnsiblePlaybookCmd{
+		Playbook:          "playbooks/esxi-vm-poweron.yml",
+		ConnectionOptions: ansiblePlaybookConnectionOptions,
+		Options:           ansiblePlaybookOptions,
+		ExecPrefix:        "",
+		Writer:				stdout,
+	}
+	err = playbook.Run()
+	check(err)
+	log.Println("[+] VM "+ vm_id +" powered on as "+ vm_name)
+	/*
+	############################################################################
+	#							VM POWERUP END 		 						   #
+	############################################################################
+	*/
+	bar := progressbar.New(100)
+	for i := 0; i < 100; i++ {
+    	bar.Add(1)
+    	time.Sleep(1000 * time.Millisecond)
+	}
+	fmt.Println("\n")
+	/*
+	############################################################################
+	#							FILE CLEANUP 		 						   #
+	############################################################################
+	*/
+	log.Println("[*] Running Helper deplfiles cleanup")
+	ansiblePlaybookConnectionOptions = &ansibler.AnsiblePlaybookConnectionOptions{}
+	ansiblePlaybookOptions = &ansibler.AnsiblePlaybookOptions{
+		Inventory: helper_host+",",
+	}
+	stdout = new(bytes.Buffer)
+	playbook = &ansibler.AnsiblePlaybookCmd{
+		Playbook:          "playbooks/helper-depfiles-cleanup.yml",
+		ConnectionOptions: ansiblePlaybookConnectionOptions,
+		Options:           ansiblePlaybookOptions,
+		ExecPrefix:        "",
+		Writer:				stdout,
+	}
+	err = playbook.Run()
+	check(err)
+	log.Println("[+] Cleanup Completed")
+	/*
+	############################################################################
+	#							VM CLEANUP END 		 						   #
+	############################################################################
+	*/
 }
 
 func check(e error) {
