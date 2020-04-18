@@ -58,13 +58,39 @@ func main() {
 		############################################################################
 	*/
 	fmt.Println("[*] Configuration file not provided parsing flags")
-	fmt.Println("[*] Gathering ESXi host info")
+	fmt.Println("[*] Checking System...")
 	ansiblePlaybookConnectionOptions := &ansibler.AnsiblePlaybookConnectionOptions{}
 	ansiblePlaybookOptions := &ansibler.AnsiblePlaybookOptions{
 		Inventory: esxi_host + ",",
+		ExtraVars: map[string]interface{}{
+			"vm_name": vm_name,
+		},
 	}
 	stdout := new(bytes.Buffer)
 	playbook := &ansibler.AnsiblePlaybookCmd{
+		Playbook:          "playbooks/esxi-check-duplicate.yml",
+		ConnectionOptions: ansiblePlaybookConnectionOptions,
+		Options:           ansiblePlaybookOptions,
+		ExecPrefix:        "",
+		Writer:            stdout,
+	}
+	_ = playbook.Run()
+	json_stdout := strings.Replace(stdout.String(), "=>", "", -1)
+	json_stdout = strings.Replace(json_stdout, json_stdout[len(json_stdout)-23:], "", -1)
+	duplicate_stdout := gjson.Get(json_stdout, "plays.0.tasks.1.hosts.*.stdout")
+	duplicate := duplicate_stdout.String()
+	if duplicate != "" {
+		kill("ERR: VMNAME ALREADY REGISTERED")
+	}
+	fmt.Println("[+] System checks passed ... starting")
+
+	fmt.Println("[*] Gathering ESXi host info")
+	ansiblePlaybookConnectionOptions = &ansibler.AnsiblePlaybookConnectionOptions{}
+	ansiblePlaybookOptions = &ansibler.AnsiblePlaybookOptions{
+		Inventory: esxi_host + ",",
+	}
+	stdout = new(bytes.Buffer)
+	playbook = &ansibler.AnsiblePlaybookCmd{
 		Playbook:          "playbooks/esxi-gather-info.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
@@ -73,7 +99,7 @@ func main() {
 	}
 	err := playbook.Run()
 	check(err)
-	json_stdout := strings.Replace(stdout.String(), "=>", "", -1)
+	json_stdout = strings.Replace(stdout.String(), "=>", "", -1)
 	json_stdout = strings.Replace(json_stdout, json_stdout[len(json_stdout)-23:], "", -1)
 	esxi_vmnet := gjson.Get(json_stdout, "plays.0.tasks.0.hosts.*.stdout_lines")
 	vmnets := esxi_vmnet.Array()
