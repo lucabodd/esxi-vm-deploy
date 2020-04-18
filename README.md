@@ -29,9 +29,9 @@ go install github.com/lucabodd/ESXi-vm-deploy
 ```
 In some cases you might need to export this environment vars
 ```
-echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
-echo 'export GOPATH=$HOME/go' >> ~/.bashrc
-echo 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' >> ~/.bashrc
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 ```
 
 ## Usage
