@@ -1,6 +1,6 @@
 # ESXi-vm-deploy
 Offering a golang program to automate vm installation on a ESXi host.
-The program will be asking for some informations, templating a .vmk file, creating a virtual disk and installing operating system via embedded BOOTP server in python.
+The program will be asking for some informations, templating a .vmk file, creating a virtual disk and installing operating system via embedded BOOTP python server.
 Before starting the automatic deployment of virtual machines you will need to tune up your system in order to be able to run program.
 To run this program you will need:
 * go > 1.13
@@ -42,7 +42,7 @@ Before running the program, please consider the following checklist:
 
 ```
 Usage: ESXi-vm-deploy [OPTIONS]
-One ore more required flag has not been prodided.
+One oe more required flag has not been prodided.
 Note that using less flag than defined could lead program into errors
 Omit flags only if you are aware of what are you doin'
   -esxi string
