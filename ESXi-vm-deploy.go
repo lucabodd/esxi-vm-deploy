@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	ansibler "github.com/apenella/go-ansible"
-	"github.com/schollz/progressbar/v3"
+	"github.com/schollz/progressbar"
 	"github.com/tidwall/gjson"
 	"log"
 	"os"
