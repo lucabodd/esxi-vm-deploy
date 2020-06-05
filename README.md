@@ -12,15 +12,12 @@ install ansible via package manager (Debian):
 ```
 sudo apt-get install ansible
 ```
-Install golang via package manager
-```
-sudo apt-get install golang
-```
-OR from sources
+Install golang from sources
 ```
 wget https://dl.google.com/go/go1.13.3.linux-amd64.tar.gz
 tar -xvf go1.13.3.linux-amd64.tar.gz
-mv go /usr/local
+sudo mv go /usr/local
+rm -rf go
 ```
 Install ESXi-vm-deploy
 ```
