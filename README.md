@@ -42,25 +42,32 @@ Before running the program, please consider the following checklist:
 
 ```
 Usage: ESXi-vm-deploy [OPTIONS]
-One oe more required flag has not been prodided.
-Note that using less flag than defined could lead program into errors
-Omit flags only if you are aware of what are you doin'
   -esxi string
-        Specify ESXi Host
+    	ESXi Hypervisor
   -help
-        prints this help message
+    	prints this help message
   -helper string
-        BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine
+    	BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine
   -vm-cpu string
-        Specify RAM size (default "2")
+    	Specify RAM size (default "2")
   -vm-disk-size string
-        Virtual machine Disk size (default "50")
+    	Virtual machine Disk size (default "50")
   -vm-ip string
-        Virtual machine IP address
+    	Virtual machine IP address
   -vm-name string
-        Specify virtual machine name
+    	Specify virtual machine name
   -vm-os string
-        Specify virtual machine OS (default "debian10-64")
+    	Specify virtual machine OS (default "debian10-64")
   -vm-ram string
-        Specify RAM size (default "16")
+    	Specify RAM size (default "16")
+One ore more required flag has not been prodided.
+Note that using less flag than required could lead program into errors
+Omit flags only if you are aware of what are you doin'
+[EXAMPLES]
+- Creation of machine with custom hardware
+ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm-disk-size 16 --vm-cpu 4
+- Creation of machine with default values
+ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]
+
+
 ```

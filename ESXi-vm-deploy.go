@@ -43,12 +43,16 @@ func main() {
 	flag.BoolVar(&help, "help", false, "prints this help message")
 	flag.Parse()
 	if esxi_host == "" || vm_name == "" || vm_ipv4 == "" || helper_host == "" || help {
-		fmt.Println("[-] ERROR: Not enough arguments")
 		fmt.Println("Usage: ESXi-vm-deploy [OPTIONS]")
-		fmt.Println("One ore more required flag has not been prodided.")
-		fmt.Println("Note that using less flag than defined could lead program into errors \nOmit flags only if you are aware of what are you doin'")
 		flag.PrintDefaults()
-		kill("ERR: NOT ENAUGH ARGS")
+		fmt.Println("One ore more required flag has not been prodided.")
+		fmt.Println("Note that using less flag than required could lead program into errors \nOmit flags only if you are aware of what are you doin'")
+		fmt.Println("[EXAMPLES]")
+		fmt.Println("- Creation of machine with custom hardware")
+		fmt.Println("ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm-disk-size 16 --vm-cpu 4")
+		fmt.Println("- Creation of machine with default values")
+		fmt.Println("ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]")
+		kill("")
 	}
 	//end of flag parsing
 
