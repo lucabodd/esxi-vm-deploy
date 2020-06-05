@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	ansibler "github.com/apenella/go-ansible"
-	"github.com/schollz/progressbar"
+	"github.com/schollz/progressbar/v3"
 	"github.com/tidwall/gjson"
 	"log"
 	"os"
@@ -256,7 +256,7 @@ func main() {
 	bar := progressbar.New(100)
 	for i := 0; i < 120; i++ {
 		bar.Add(1)
-		time.Sleep(100 * time.Second)
+		time.Sleep(1000 * time.Millisecond)
 	}
 	fmt.Println("\n")
 	/*
