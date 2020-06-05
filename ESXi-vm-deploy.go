@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	ansibler "github.com/apenella/go-ansible"
-	"github.com/gosuri/uiprogress"
+	"github.com/schollz/progressbar"
 	"github.com/tidwall/gjson"
 	"log"
 	"os"
@@ -253,16 +253,12 @@ func main() {
 		############################################################################
 	*/
 	fmt.Println("\n")
-	uiprogress.Start()            // start rendering
-	bar := uiprogress.AddBar(100) // Add a new bar
-
-	// optionally, append and prepend completion and elapsed time
-	bar.AppendCompleted()
-	bar.PrependElapsed()
-
-	for bar.Incr() {
-		time.Sleep(time.Millisecond * 1200)
+	bar := progressbar.Default(100)
+	for i := 0; i < 100; i++ {
+		bar.Add(1)
+		time.Sleep(40 * time.Millisecond)
 	}
+	fmt.Println("\n")
 	/*
 		############################################################################
 		#							FILE CLEANUP 		 						   #
