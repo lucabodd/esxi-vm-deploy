@@ -6,8 +6,14 @@ To run this program you will need:
 * go > 1.13
 * ansible >= 2.7
 
-## System Setup
-In order to setup the system running golang program you will need to follow the follofing steps:
+## Automatic system setup
+In order to setup the system and be able to running golang program you can run the script below for automatic setup or you can follow the step-by-step guide in "Manual Setup" section
+```
+
+```
+
+## Manual system Setup
+In order to setup the system and be able to running golang program you will need to follow the following steps:
 install ansible via package manager (Debian):
 ```
 sudo apt-get install ansible
