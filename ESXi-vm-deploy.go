@@ -50,7 +50,7 @@ func main() {
 		fmt.Println("[EXAMPLES]")
 		fmt.Println("- Creation of machine with custom hardware")
 		fmt.Println("ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm-disk-size 16 --vm-cpu 4")
-		fmt.Println("- Creation of machine with default values")
+		fmt.Println("- Creation of machine with default values 3 CPU 50GB Disk 16GB RAM")
 		fmt.Println("ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]")
 		kill("")
 	}

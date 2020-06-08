@@ -69,7 +69,7 @@ Omit flags only if you are aware of what are you doin'
 [EXAMPLES]
 - Creation of machine with custom hardware
 ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm-disk-size 16 --vm-cpu 4
-- Creation of machine with default values
+- Creation of machine with default values 3 CPU 50GB Disk 16GB RAM
 ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]
 
 
