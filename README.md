@@ -7,9 +7,9 @@ To run this program you will need:
 * ansible >= 2.7
 
 ## Automatic system setup
-In order to setup the system and be able to running golang program you can run the script below for automatic setup or you can follow the step-by-step guide in "Manual Setup" section
+If you are running Debian, in order to setup the system and be able to running golang program you can run the script below (needs sudo privilege on host) for automatic setup or you can follow the step-by-step guide in "Manual Setup" section
 ```
-
+curl https://raw.githubusercontent.com/lucabodd/ESXi-vm-deploy/master/setup/ESXi-vm-deploy-install.sh | bash
 ```
 
 ## Manual system Setup
@@ -20,8 +20,8 @@ sudo apt-get install ansible
 ```
 Install golang from sources
 ```
-wget https://dl.google.com/go/go1.13.3.linux-amd64.tar.gz
-tar -xvf go1.13.3.linux-amd64.tar.gz
+wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
+tar -xvf go1.14.4.linux-amd64.tar.gz
 sudo mv go /usr/local
 rm -rf go
 ```
