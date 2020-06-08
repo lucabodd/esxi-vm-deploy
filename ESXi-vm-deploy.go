@@ -80,8 +80,8 @@ func main() {
 	}
 	_ = playbook.Run()
 	json_stdout := strings.Replace(stdout.String(), "=>", "", -1)
-	fmt.Println(json_stdout)
-	kill("Breakpoint")
+	//fmt.Println(json_stdout)
+	//kill("Breakpoint")
 	json_stdout = strings.Replace(json_stdout, json_stdout[len(json_stdout)-23:], "", -1)
 	duplicate_stdout := gjson.Get(json_stdout, "plays.0.tasks.1.hosts.*.stdout")
 	duplicate := duplicate_stdout.String()
