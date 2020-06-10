@@ -1,13 +1,13 @@
 package main
 
 import (
-	"build"
 	"bytes"
 	"flag"
 	"fmt"
 	ansibler "github.com/apenella/go-ansible"
 	"github.com/schollz/progressbar"
 	"github.com/tidwall/gjson"
+	"go/build"
 	"log"
 	"os"
 	"strings"
