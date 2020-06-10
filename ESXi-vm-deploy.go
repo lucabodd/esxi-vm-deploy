@@ -55,6 +55,12 @@ func main() {
 		kill("")
 	}
 	//end of flag parsing
+	// retrive bin directory
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		gopath = build.Default.GOPATH
+	}
+	datadir := gopath+"/src/github.com/lucabodd/ESXi-vm-deploy"
 
 	/*
 		############################################################################
@@ -72,7 +78,7 @@ func main() {
 	}
 	stdout := new(bytes.Buffer)
 	playbook := &ansibler.AnsiblePlaybookCmd{
-		Playbook:          "playbooks/esxi-check-duplicate.yml",
+		Playbook:          datadir+"/playbooks/esxi-check-duplicate.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
 		ExecPrefix:        "",
@@ -97,7 +103,7 @@ func main() {
 	}
 	stdout = new(bytes.Buffer)
 	playbook = &ansibler.AnsiblePlaybookCmd{
-		Playbook:          "playbooks/esxi-gather-info.yml",
+		Playbook:          datadir+"/playbooks/esxi-gather-info.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
 		ExecPrefix:        "",
@@ -172,7 +178,7 @@ func main() {
 	}
 	stdout = new(bytes.Buffer)
 	playbook = &ansibler.AnsiblePlaybookCmd{
-		Playbook:          "playbooks/esxi-deploy-vmx.yml",
+		Playbook:          datadir+"/playbooks/esxi-deploy-vmx.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
 		ExecPrefix:        "",
@@ -214,7 +220,7 @@ func main() {
 	}
 	stdout = new(bytes.Buffer)
 	playbook = &ansibler.AnsiblePlaybookCmd{
-		Playbook:          "playbooks/bootp-server-deploy.yml",
+		Playbook:          datadir+"/playbooks/bootp-server-deploy.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
 		ExecPrefix:        "",
@@ -244,7 +250,7 @@ func main() {
 	}
 	stdout = new(bytes.Buffer)
 	playbook = &ansibler.AnsiblePlaybookCmd{
-		Playbook:          "playbooks/esxi-vm-poweron.yml",
+		Playbook:          datadir+"/playbooks/esxi-vm-poweron.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
 		ExecPrefix:        "",
@@ -277,7 +283,7 @@ func main() {
 	}
 	stdout = new(bytes.Buffer)
 	playbook = &ansibler.AnsiblePlaybookCmd{
-		Playbook:          "playbooks/helper-depfiles-cleanup.yml",
+		Playbook:          datadir+"/playbooks/helper-depfiles-cleanup.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
 		ExecPrefix:        "",
