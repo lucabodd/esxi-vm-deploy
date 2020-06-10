@@ -37,6 +37,12 @@ export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 ```
 
+## Update
+As of today updates will be released on github.com, in order to update the program you can run the following command
+```
+go get -u github.com/lucabodd/ESXi-vm-deploy
+```
+
 ## Usage
 Usage is described running the program with the help flag.
 Before running the program, please consider the following checklist:
