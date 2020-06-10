@@ -35,7 +35,7 @@ func main() {
 	//Flag parsing
 	flag.StringVar(&esxi_host, "esxi", "", "ESXi Hypervisor")
 	flag.StringVar(&vm_name, "vm-name", "", "Specify virtual machine name")
-	flag.StringVar(&vm_os, "vm-os", "debian10-64", "Specify virtual machine OS")
+	flag.StringVar(&vm_os, "vm-os", "debian10-64", "Specify virtual machine OS available: debian9-64, debian10-64")
 	flag.StringVar(&vm_ram, "vm-ram", "16", "Specify RAM size")
 	flag.StringVar(&vm_cpu, "vm-cpu", "2", "Specify RAM size")
 	flag.StringVar(&vm_ipv4, "vm-ip", "", "Virtual machine IP address")
