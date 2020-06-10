@@ -217,6 +217,7 @@ func main() {
 			"vm_mac_addr": vm_mac_addr,
 			"helper_host": helper_host,
 			"vm_name":     vm_name,
+			"vm_os":        vm_os,
 		},
 	}
 	stdout = new(bytes.Buffer)
