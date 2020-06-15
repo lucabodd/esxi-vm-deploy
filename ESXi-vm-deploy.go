@@ -18,6 +18,7 @@ func main() {
 	//set ansible env vars
 	os.Setenv("ANSIBLE_STDOUT_CALLBACK", "json")
 	os.Setenv("ANSIBLE_HOST_KEY_CHECKING", "False")
+	version := "0.0"
 
 	//vars
 	var esxi_host string
@@ -41,6 +42,7 @@ func main() {
 	flag.StringVar(&vm_ipv4, "vm-ip", "", "Virtual machine IP address")
 	flag.StringVar(&vm_disk_size, "vm-disk-size", "50", "Virtual machine Disk size")
 	flag.StringVar(&helper_host, "helper", "", "BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine")
+	flag.BoolVar(&helper_host, "version", false, "Display current version of script")
 	flag.BoolVar(&help, "help", false, "prints this help message")
 	flag.Parse()
 	if esxi_host == "" || vm_name == "" || vm_ipv4 == "" || helper_host == "" || help {
@@ -54,6 +56,9 @@ func main() {
 		fmt.Println("- Creation of machine with default values 3 CPU 50GB Disk 16GB RAM")
 		fmt.Println("ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]")
 		kill("")
+	}
+	if version {
+		fmt.Println("ESXi-vm-deploy version: ", version)
 	}
 	//end of flag parsing
 	// retrive bin directory
@@ -215,7 +220,6 @@ func main() {
 		ExtraVars: map[string]interface{}{
 			"vm_ipv4":     vm_ipv4,
 			"vm_mac_addr": vm_mac_addr,
-			"helper_host": helper_host,
 			"vm_name":     vm_name,
 			"vm_os":        vm_os,
 		},
