@@ -46,6 +46,11 @@ func main() {
 	flag.BoolVar(&version, "version", false, "Display current version of script")
 	flag.BoolVar(&help, "help", false, "prints this help message")
 	flag.Parse()
+
+	if version {
+		fmt.Println("ESXi-vm-deploy version: ", current_version)
+		kill("")
+	}
 	if esxi_host == "" || vm_name == "" || vm_ipv4 == "" || helper_host == "" || help {
 		fmt.Println("Usage: ESXi-vm-deploy [OPTIONS]")
 		flag.PrintDefaults()
@@ -57,9 +62,6 @@ func main() {
 		fmt.Println("- Creation of machine with default values 3 CPU 50GB Disk 16GB RAM")
 		fmt.Println("ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]")
 		kill("")
-	}
-	if version {
-		fmt.Println("ESXi-vm-deploy version: ", current_version)
 	}
 	//end of flag parsing
 	// retrive bin directory
