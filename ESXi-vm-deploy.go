@@ -42,7 +42,7 @@ func main() {
 	flag.StringVar(&vm_ipv4, "vm-ip", "", "Virtual machine IP address")
 	flag.StringVar(&vm_disk_size, "vm-disk-size", "50", "Virtual machine Disk size")
 	flag.StringVar(&helper_host, "helper", "", "BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine")
-	flag.BoolVar(&helper_host, "version", false, "Display current version of script")
+	flag.BoolVar(&version, "version", false, "Display current version of script")
 	flag.BoolVar(&help, "help", false, "prints this help message")
 	flag.Parse()
 	if esxi_host == "" || vm_name == "" || vm_ipv4 == "" || helper_host == "" || help {
