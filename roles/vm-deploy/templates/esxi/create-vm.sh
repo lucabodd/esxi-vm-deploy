@@ -50,7 +50,7 @@ echo ide0:0.deviceType = '"'cdrom-raw'"'
 echo ide:0.startConnected = '"'false'"'
 echo floppy0.startConnected = '"'FALSE'"'
 echo
-echo ethernet0.virtualDev = '"'vmxnet3'"'
+echo ethernet0.virtualDev = '"'e1000e'"'
 echo ethernet0.networkName = '"'$VMNET'"'
 echo ethernet0.addressType = '"'generated'"'
 echo ethernet0.uptCompatibility = '"'TRUE'"'
