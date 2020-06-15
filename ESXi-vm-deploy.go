@@ -32,6 +32,7 @@ func main() {
 	var vm_disk_size string
 	var helper_host string
 	var help bool
+	var version bool
 
 	//Flag parsing
 	flag.StringVar(&esxi_host, "esxi", "", "ESXi Hypervisor")
