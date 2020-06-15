@@ -69,6 +69,8 @@ Usage: ESXi-vm-deploy [OPTIONS]
     	Specify virtual machine OS (default "debian10-64")
   -vm-ram string
     	Specify RAM size (default "16")
+  -version
+        Display current version of script
 One ore more required flag has not been prodided.
 Note that using less flag than required could lead program into errors
 Omit flags only if you are aware of what are you doin'
