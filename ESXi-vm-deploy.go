@@ -18,7 +18,7 @@ func main() {
 	//set ansible env vars
 	os.Setenv("ANSIBLE_STDOUT_CALLBACK", "json")
 	os.Setenv("ANSIBLE_HOST_KEY_CHECKING", "False")
-	v := "0.0"
+	current_version := "0.0"
 
 	//vars
 	var esxi_host string
@@ -58,7 +58,7 @@ func main() {
 		kill("")
 	}
 	if version {
-		fmt.Println("ESXi-vm-deploy version: ", v)
+		fmt.Println("ESXi-vm-deploy version: ", current_version)
 	}
 	//end of flag parsing
 	// retrive bin directory
