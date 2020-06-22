@@ -238,6 +238,7 @@ func main() {
 	err = playbook.Run()
 	json_stdout = strings.Replace(stdout.String(), "=>", "", -1)
 	json_stdout = strings.Replace(json_stdout, json_stdout[len(json_stdout)-24:], "", -1)
+	fmt.Println(json_stdout)
 	log.Println("[+] BOOTP server running")
 	/*
 		############################################################################
