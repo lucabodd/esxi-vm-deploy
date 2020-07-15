@@ -99,6 +99,7 @@ func main() {
 	if duplicate != "" {
 		kill("ERR: VMNAME ALREADY REGISTERED")
 	}
+	
 	fmt.Println("[+] System checks passed ... starting")
 
 	fmt.Println("[*] Gathering ESXi host info")
