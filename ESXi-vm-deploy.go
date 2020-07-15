@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	ansibler "github.com/apenella/go-ansible"
+	ansibler "github.com/lucabodd/go-ansible"
 	"github.com/schollz/progressbar"
 	"github.com/tidwall/gjson"
 	"go/build"
@@ -78,27 +78,23 @@ func main() {
 	*/
 	fmt.Println("[*] Configuration file not provided parsing flags")
 	fmt.Println("[*] Checking System...")
-	ansiblePlaybookConnectionOptions := &ansibler.AnsiblePlaybookConnectionOptions{}
-	ansiblePlaybookOptions := &ansibler.AnsiblePlaybookOptions{
-		Inventory: esxi_host + ",",
-		ExtraVars: map[string]interface{}{
-			"vm_name": vm_name,
+
+	res := &ansibler.PlaybookResults{}
+	playbook := &ansibler.PlaybookCmd{
+		Playbook:          datadir+"/playbooks/esxi-check-duplicate.yml",
+		ConnectionOptions: &ansibler.PlaybookConnectionOptions{},
+		Options:           &ansibler.PlaybookOptions{
+			Inventory: esxi_host + ",",
+			ExtraVars: map[string]interface{}{
+				"vm_name": vm_name,
+			},
 		},
 	}
-	stdout := new(bytes.Buffer)
-	playbook := &ansibler.AnsiblePlaybookCmd{
-		Playbook:          datadir+"/playbooks/esxi-check-duplicate.yml",
-		ConnectionOptions: ansiblePlaybookConnectionOptions,
-		Options:           ansiblePlaybookOptions,
-		ExecPrefix:        "",
-		Writer:            stdout,
-	}
-	_ = playbook.Run()
-	json_stdout := strings.Replace(stdout.String(), "=>", "", -1)
-	//fmt.Println(json_stdout)
-	//kill("Breakpoint")
-	json_stdout = strings.Replace(json_stdout, json_stdout[len(json_stdout)-23:], "", -1)
-	duplicate_stdout := gjson.Get(json_stdout, "plays.0.tasks.1.hosts.*.stdout")
+	res,err := playbook.Run()
+	check(err)
+	err = res.PlaybookResultsChecks()
+	check(err)
+	duplicate_stdout := gjson.Get(res.RawStdout, "plays.0.tasks.1.hosts.*.stdout")
 	duplicate := duplicate_stdout.String()
 	if duplicate != "" {
 		kill("ERR: VMNAME ALREADY REGISTERED")
@@ -106,12 +102,12 @@ func main() {
 	fmt.Println("[+] System checks passed ... starting")
 
 	fmt.Println("[*] Gathering ESXi host info")
-	ansiblePlaybookConnectionOptions = &ansibler.AnsiblePlaybookConnectionOptions{}
-	ansiblePlaybookOptions = &ansibler.AnsiblePlaybookOptions{
+	ansiblePlaybookConnectionOptions = &ansibler.PlaybookConnectionOptions{}
+	ansiblePlaybookOptions = &ansibler.PlaybookOptions{
 		Inventory: esxi_host + ",",
 	}
 	stdout = new(bytes.Buffer)
-	playbook = &ansibler.AnsiblePlaybookCmd{
+	playbook = &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/esxi-gather-info.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
@@ -172,8 +168,8 @@ func main() {
 	*/
 	log.Println("[+] RA passed, deploying .vmx and allocating disk space (thick)")
 	log.Println("[*] Deploying .vmx file")
-	ansiblePlaybookConnectionOptions = &ansibler.AnsiblePlaybookConnectionOptions{}
-	ansiblePlaybookOptions = &ansibler.AnsiblePlaybookOptions{
+	ansiblePlaybookConnectionOptions = &ansibler.PlaybookConnectionOptions{}
+	ansiblePlaybookOptions = &ansibler.PlaybookOptions{
 		Inventory: esxi_host + ",",
 		ExtraVars: map[string]interface{}{
 			"vm_name":      vm_name,
@@ -186,7 +182,7 @@ func main() {
 		},
 	}
 	stdout = new(bytes.Buffer)
-	playbook = &ansibler.AnsiblePlaybookCmd{
+	playbook = &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/esxi-deploy-vmx.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
@@ -217,8 +213,8 @@ func main() {
 		############################################################################
 	*/
 	log.Println("[*] uploading BOOTP server")
-	ansiblePlaybookConnectionOptions = &ansibler.AnsiblePlaybookConnectionOptions{}
-	ansiblePlaybookOptions = &ansibler.AnsiblePlaybookOptions{
+	ansiblePlaybookConnectionOptions = &ansibler.PlaybookConnectionOptions{}
+	ansiblePlaybookOptions = &ansibler.PlaybookOptions{
 		Inventory: helper_host + ",",
 		ExtraVars: map[string]interface{}{
 			"vm_ipv4":     vm_ipv4,
@@ -228,7 +224,7 @@ func main() {
 		},
 	}
 	stdout = new(bytes.Buffer)
-	playbook = &ansibler.AnsiblePlaybookCmd{
+	playbook = &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/bootp-server-deploy.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
@@ -251,15 +247,15 @@ func main() {
 		############################################################################
 	*/
 	log.Println("[*] Powering up VM")
-	ansiblePlaybookConnectionOptions = &ansibler.AnsiblePlaybookConnectionOptions{}
-	ansiblePlaybookOptions = &ansibler.AnsiblePlaybookOptions{
+	ansiblePlaybookConnectionOptions = &ansibler.PlaybookConnectionOptions{}
+	ansiblePlaybookOptions = &ansibler.PlaybookOptions{
 		Inventory: esxi_host + ",",
 		ExtraVars: map[string]interface{}{
 			"vm_id": vm_id,
 		},
 	}
 	stdout = new(bytes.Buffer)
-	playbook = &ansibler.AnsiblePlaybookCmd{
+	playbook = &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/esxi-vm-poweron.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
@@ -287,12 +283,12 @@ func main() {
 		############################################################################
 	*/
 	log.Println("[*] Running Helper deplfiles cleanup")
-	ansiblePlaybookConnectionOptions = &ansibler.AnsiblePlaybookConnectionOptions{}
-	ansiblePlaybookOptions = &ansibler.AnsiblePlaybookOptions{
+	ansiblePlaybookConnectionOptions = &ansibler.PlaybookConnectionOptions{}
+	ansiblePlaybookOptions = &ansibler.PlaybookOptions{
 		Inventory: helper_host + ",",
 	}
 	stdout = new(bytes.Buffer)
-	playbook = &ansibler.AnsiblePlaybookCmd{
+	playbook = &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/helper-depfiles-cleanup.yml",
 		ConnectionOptions: ansiblePlaybookConnectionOptions,
 		Options:           ansiblePlaybookOptions,
