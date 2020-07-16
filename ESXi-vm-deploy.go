@@ -87,7 +87,6 @@ func main() {
 			},
 		},
 	}
-	fmt.Println(datadir)
 	res := &ansibler.PlaybookResults{}
 	res,err := playbook.Run()
 	fmt.Printf("%+v",res)
