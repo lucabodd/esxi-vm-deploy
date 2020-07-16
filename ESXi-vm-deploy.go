@@ -74,8 +74,7 @@ func main() {
 		#							VARS COLLECTION 							   #
 		############################################################################
 	*/
-	fmt.Println("[*] Configuration file not provided parsing flags")
-	fmt.Println("[*] Checking System...")
+	log.Println("[*] Checking System...")
 
 	playbook := &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/esxi-check-duplicate.yml",
@@ -94,8 +93,8 @@ func main() {
 	duplicate_stdout := gjson.Get(res.RawStdout, "plays.0.tasks.1.hosts.*.stdout")
 	duplicate := duplicate_stdout.Int()
 	if duplicate > 0 {
-		fmt.Println("[-] A VM with name "+vm_name+" is already registered")
-		fmt.Println("[-] Detected: "+duplicate_stdout)
+		log.Println("[-] A VM with name "+vm_name+" is already registered")
+		log.Println("[-] Detected: "+duplicate_stdout)
 		kill("ERR: VMNAME ALREADY REGISTERED")
 	}
 
