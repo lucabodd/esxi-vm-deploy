@@ -87,7 +87,7 @@ func main() {
 			},
 		},
 	}
-	res,err := playbook.Run()
+	res, err := playbook.Run()
 	fmt.Printf("%+v",res)
 	check(err)
 	err = res.PlaybookResultsChecks()
