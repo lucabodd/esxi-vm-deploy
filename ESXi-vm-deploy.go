@@ -88,13 +88,12 @@ func main() {
 		},
 	}
 	res, err := playbook.Run()
-	fmt.Printf("%+v",res)
 	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
 	duplicate_stdout := gjson.Get(res.RawStdout, "plays.0.tasks.1.hosts.*.stdout")
-	duplicate := duplicate_stdout.String()
-	if duplicate != "" {
+	duplicate := duplicate_stdout.Int()
+	if duplicate > 0 {
 		kill("ERR: VMNAME ALREADY REGISTERED")
 	}
 
