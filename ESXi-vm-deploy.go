@@ -277,11 +277,10 @@ func main() {
 			Inventory: helper_host + ",",
 		},
 	}
-	res = &ansibler.PlaybookResults{}
-	res, err = playbook.Run()
-	check(err)
+	res, err := playbook.Run()
+    check(err)
 	err = res.PlaybookResultsChecks()
-	check(err)
+    check(err)
 	log.Println("[+] Cleanup Completed")
 	/*
 		############################################################################
