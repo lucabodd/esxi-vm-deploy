@@ -81,7 +81,7 @@ func main() {
 		Playbook:          datadir+"/playbooks/esxi-check-duplicate.yml",
 		ConnectionOptions: &ansibler.PlaybookConnectionOptions{},
 		Options:           &ansibler.PlaybookOptions{
-			Inventory: esxi_host + ",",
+			Inventory: "hqit-vrt-04,",
 			ExtraVars: map[string]interface{}{
 				"vm_name": vm_name,
 			},
