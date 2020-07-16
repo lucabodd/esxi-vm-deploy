@@ -1,8 +1,0 @@
----
-
-- hosts: local
-  gather_facts: no
-
-  tasks:
-    - name: Print line
-      command: ping -c 4 8.8.8.8
