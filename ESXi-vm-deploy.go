@@ -277,7 +277,7 @@ func main() {
 			Inventory: helper_host + ",",
 		},
 	}
-	res, err := playbook.Run()
+	res, err = playbook.Run()
     check(err)
 	err = res.PlaybookResultsChecks()
     check(err)
