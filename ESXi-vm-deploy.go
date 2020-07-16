@@ -94,7 +94,7 @@ func main() {
 	duplicate := duplicate_stdout.Int()
 	if duplicate > 0 {
 		log.Println("[-] A VM with name "+vm_name+" is already registered")
-		log.Println("[-] Detected: "+duplicate_stdout)
+		log.Println("[-] Detected: "+duplicate_stdout.String())
 		kill("ERR: VMNAME ALREADY REGISTERED")
 	}
 
