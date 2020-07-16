@@ -1,6 +1,6 @@
-/*
-package main
 
+package test
+/*
 import (
 	"fmt"
     ansibler "github.com/lucabodd/go-ansible"
