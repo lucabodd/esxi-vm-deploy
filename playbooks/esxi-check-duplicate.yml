@@ -1,4 +1,4 @@
 - hosts: all
   tasks:
   - name: "Matching vm with same name"
-    shell: vim-cmd vmsvc/getallvms | grep -cw "{{vm_name}}"
+    shell: vim-cmd vmsvc/getallvms | grep -cw "{{vm_name}}" || true
