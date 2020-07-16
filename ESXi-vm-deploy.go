@@ -94,6 +94,8 @@ func main() {
 	duplicate_stdout := gjson.Get(res.RawStdout, "plays.0.tasks.1.hosts.*.stdout")
 	duplicate := duplicate_stdout.Int()
 	if duplicate > 0 {
+		fmt.Println("[-] A VM with name "+vm_name+" is already registered")
+		fmt.Println("[-] Detected: "+duplicate_stdout)
 		kill("ERR: VMNAME ALREADY REGISTERED")
 	}
 
