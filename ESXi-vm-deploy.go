@@ -262,7 +262,7 @@ func main() {
 	bar := progressbar.Default(100)
 	for i := 0; i < 100; i++ {
 		bar.Add(1)
-		time.Sleep(1200 * time.Millisecond)
+		time.Sleep(1500 * time.Millisecond)
 	}
 	fmt.Println("\n")
 	/*
