@@ -55,7 +55,7 @@ func main() {
 
 	if version {
 		fmt.Println("ESXi-vm-deploy version: ", current_version)
-		fmt.Println("see CHANGELOG.md for latest version under "+datadir+"/CHANGELOG.md or on git")
+		fmt.Println("see CHANGELOG.md for latest version changes under "+datadir+"/CHANGELOG.md or on git")
 		kill("")
 	}
 	if esxi_host == "" || vm_name == "" || vm_ipv4 == "" || helper_host == "" || help {
