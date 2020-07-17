@@ -9,7 +9,7 @@
       packages:
       - zlib1g-dev
       - libffi-dev
-      - build-essentials
+      - build-essential
 
   #-----------------------+
   # Setting up python env |
