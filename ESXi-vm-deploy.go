@@ -45,8 +45,17 @@ func main() {
 	flag.BoolVar(&help, "help", false, "prints this help message")
 	flag.Parse()
 
+	// retrive bin directory
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		gopath = build.Default.GOPATH
+	}
+	datadir := gopath+"/src/github.com/lucabodd/ESXi-vm-deploy"
+
+
 	if version {
 		fmt.Println("ESXi-vm-deploy version: ", current_version)
+		fmt.Println("see CHANGELOG.md for latest version under "+datadir+"/CHANGELOG.md or on git")
 		kill("")
 	}
 	if esxi_host == "" || vm_name == "" || vm_ipv4 == "" || helper_host == "" || help {
@@ -62,12 +71,6 @@ func main() {
 		kill("")
 	}
 	//end of flag parsing
-	// retrive bin directory
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		gopath = build.Default.GOPATH
-	}
-	datadir := gopath+"/src/github.com/lucabodd/ESXi-vm-deploy"
 
 	/*
 		############################################################################
