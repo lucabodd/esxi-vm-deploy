@@ -153,6 +153,24 @@ func main() {
 		check(err)
 		vm_datastore = datastores[id].Str
 	}
+
+	//check datastore available space
+	playbook = &ansibler.PlaybookCmd{
+		Playbook:          datadir+"/playbooks/esxi-check-datastore.yml",
+		ConnectionOptions: &ansibler.PlaybookConnectionOptions{},
+		Options:           &ansibler.PlaybookOptions{
+			Inventory: esxi_host + ",",
+			ExtraVars: map[string]interface{}{
+				"datastore": datastore,
+			}
+		},
+	}
+	res = &ansibler.PlaybookResults{}
+	res,err = playbook.Run()
+	check(err)
+	err = res.PlaybookResultsChecks()
+	check(err)
+	fmt.Println(res.RawStdout)
 	/*
 		############################################################################
 		#							VARS COLLECTION END 						   #
