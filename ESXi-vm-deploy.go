@@ -162,7 +162,7 @@ func main() {
 			Inventory: esxi_host + ",",
 			ExtraVars: map[string]interface{}{
 				"datastore": datastore,
-			}
+			},
 		},
 	}
 	res = &ansibler.PlaybookResults{}
