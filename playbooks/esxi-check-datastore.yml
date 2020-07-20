@@ -1,0 +1,6 @@
+- hosts: all
+  gather_facts: no
+  tasks:
+
+  - name: "Colletting datastore available space for ESXi host"
+    shell: df -h | grep "{{datastore}}" | awk '{print $4}'
