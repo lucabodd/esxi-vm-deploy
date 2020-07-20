@@ -52,33 +52,37 @@ Before running the program, please consider the following checklist:
 ```
 Usage: ESXi-vm-deploy [OPTIONS]
   -esxi string
-    	ESXi Hypervisor
+        ESXi Hypervisor
   -help
-    	prints this help message
+        prints this help message
   -helper string
-    	BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine
-  -vm-cpu string
-    	Specify RAM size (default "2")
-  -vm-disk-size string
-    	Virtual machine Disk size (default "50")
-  -vm-ip string
-    	Virtual machine IP address
-  -vm-name string
-    	Specify virtual machine name
-  -vm-os string
-    	Specify virtual machine OS (default "debian10-64")
-  -vm-ram string
-    	Specify RAM size (default "16")
+        BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine
+  -verbose
+        enable verbose mode
   -version
         Display current version of script
+  -vm-cpu string
+        Specify RAM size (default "2")
+  -vm-disk-size string
+        Virtual machine Disk size (default "50")
+  -vm-ip string
+        Virtual machine IP address
+  -vm-name string
+        Specify virtual machine name
+  -vm-os string
+        Specify virtual machine OS available: debian9-64, debian10-64 (default "debian10-64")
+  -vm-ram string
+        Specify RAM size (default "16")
 One ore more required flag has not been prodided.
 Note that using less flag than required could lead program into errors
 Omit flags only if you are aware of what are you doin'
 [EXAMPLES]
 - Creation of machine with custom hardware
-ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm-disk-size 16 --vm-cpu 4
+ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm
+-disk-size 16 --vm-cpu 4
 - Creation of machine with default values 3 CPU 50GB Disk 16GB RAM
 ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]
+
 
 
 ```

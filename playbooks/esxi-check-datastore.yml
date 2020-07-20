@@ -3,4 +3,4 @@
   tasks:
 
   - name: "Colletting datastore available space for ESXi host"
-    shell: df -h | grep "{{datastore}}" | awk '{print $4}'
+    shell: df -h | grep "{{datastore}}" | awk '{print $4}' | tr -d "G"

@@ -9,6 +9,8 @@ import (
 	"go/build"
 	"log"
 	"os"
+	"strings"
+	"strconv"
 	"time"
 )
 
@@ -16,7 +18,7 @@ func main() {
 	//set ansible env vars
 	os.Setenv("ANSIBLE_STDOUT_CALLBACK", "json")
 	os.Setenv("ANSIBLE_HOST_KEY_CHECKING", "False")
-	current_version := "1.0.1"
+	current_version := "1.2.1"
 
 	//vars
 	var esxi_host string
@@ -30,6 +32,7 @@ func main() {
 	var vm_disk_size string
 	var helper_host string
 	var help bool
+	var verbose bool
 	var version bool
 
 	//Flag parsing
@@ -43,6 +46,7 @@ func main() {
 	flag.StringVar(&helper_host, "helper", "", "BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine")
 	flag.BoolVar(&version, "version", false, "Display current version of script")
 	flag.BoolVar(&help, "help", false, "prints this help message")
+	flag.BoolVar(&verbose, "verbose", false, "enable verbose mode")
 	flag.Parse()
 
 	// retrive bin directory
@@ -93,6 +97,7 @@ func main() {
 	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
+	verboseOut(res.RawStdout, verbose)
 	duplicate_stdout := gjson.Get(res.RawStdout, "plays.0.tasks.1.hosts.*.stdout")
 	duplicate := duplicate_stdout.Int()
 	if duplicate > 0 {
@@ -115,6 +120,7 @@ func main() {
 	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
+	verboseOut(res.RawStdout, verbose)
 	esxi_vmnet := gjson.Get(res.RawStdout, "plays.0.tasks.0.hosts.*.stdout_lines")
 	vmnets := esxi_vmnet.Array()
 	esxi_datastores := gjson.Get(res.RawStdout, "plays.0.tasks.1.hosts.*.stdout_lines")
@@ -161,7 +167,7 @@ func main() {
 		Options:           &ansibler.PlaybookOptions{
 			Inventory: esxi_host + ",",
 			ExtraVars: map[string]interface{}{
-				"datastore": datastore,
+				"datastore": vm_datastore,
 			},
 		},
 	}
@@ -170,7 +176,28 @@ func main() {
 	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
-	fmt.Println(res.RawStdout)
+	verboseOut(res.RawStdout, verbose)
+	esxi_available_space := gjson.Get(res.RawStdout, "plays.0.tasks.0.hosts.*.stdout").Str
+
+	//parse result and convert TB to GB
+	var esxi_available_space_qty float64
+	if strings.Contains(esxi_available_space, "T"){
+		esxi_available_space = strings.Trim(esxi_available_space, "T")
+		esxi_available_space_qty , err := strconv.ParseFloat(esxi_available_space, 32)
+		check(err)
+    	esxi_available_space_qty = esxi_available_space_qty * 1024
+	} else if strings.Contains(esxi_available_space, "G"){
+		esxi_available_space = strings.Trim(esxi_available_space, "G")
+		esxi_available_space_qty , err = strconv.ParseFloat(esxi_available_space, 32)
+		check(err)
+	}
+
+	vm_disk_size_qty , err := strconv.ParseFloat(vm_disk_size, 32)
+	check(err)
+	if vm_disk_size_qty > esxi_available_space_qty {
+		log.Printf("[-] ESXi host has only %.2fG of free memory and cannot suite vm size", esxi_available_space_qty)
+		kill("ERR: ESXi NOT ENAUGH SPACE")
+	}
 	/*
 		############################################################################
 		#							VARS COLLECTION END 						   #
@@ -204,6 +231,7 @@ func main() {
 	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
+	verboseOut(res.RawStdout, verbose)
 	log.Println("[+] Virtual machine created. disk initialization completed")
 	log.Println("[*] Retrieveing VM mac address")
 	log.Println("[*] Retrieveing Assigned VM Hypervisor ID")
@@ -243,6 +271,7 @@ func main() {
 	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
+	verboseOut(res.RawStdout, verbose)
 	log.Println("[+] BOOTP server running")
 	/*
 		############################################################################
@@ -270,6 +299,7 @@ func main() {
 	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
+	verboseOut(res.RawStdout, verbose)
 	log.Println("[+] VM " + vm_id + " powered on as " + vm_name)
 	/*
 		############################################################################
@@ -301,6 +331,7 @@ func main() {
     check(err)
 	err = res.PlaybookResultsChecks()
     check(err)
+	verboseOut(res.RawStdout, verbose)
 	log.Println("[+] Cleanup Completed")
 	/*
 		############################################################################
@@ -318,4 +349,10 @@ func check(e error) {
 func kill(reason string) {
 	fmt.Println(reason)
 	os.Exit(1)
+}
+
+func verboseOut(message string, verbose bool){
+	if verbose {
+		fmt.Println(message)
+	}
 }

@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2017-06-20
+### Added
+- verbose mode
+
+## [1.1.0] - 2017-06-20
+### Added
+- ESXi disk space check before create .vmdk disk
+
 ## [1.0.0] - 2017-06-20
 ### Added
 - CHANGELOG.md
