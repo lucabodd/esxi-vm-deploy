@@ -178,14 +178,17 @@ func main() {
 	check(err)
 	verboseOut(res.RawStdout, verbose)
 	esxi_available_space := gjson.Get(res.RawStdout, "plays.0.tasks.0.hosts.*.stdout").Str
+	fmt.Println(esxi_available_space)
 
 	//parse result and convert TB to GB
 	var esxi_available_space_qty float64
 	if strings.Contains(esxi_available_space, "T"){
 		esxi_available_space = strings.Trim(esxi_available_space, "T")
+		fmt.Println(esxi_available_space)
 		esxi_available_space_qty , err := strconv.ParseFloat(esxi_available_space, 32)
 		check(err)
     	esxi_available_space_qty = esxi_available_space_qty * 1024
+		fmt.Println(esxi_available_space_qty)
 	} else if strings.Contains(esxi_available_space, "G"){
 		esxi_available_space = strings.Trim(esxi_available_space, "G")
 		esxi_available_space_qty , err = strconv.ParseFloat(esxi_available_space, 32)
