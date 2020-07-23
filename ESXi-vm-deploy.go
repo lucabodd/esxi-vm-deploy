@@ -185,7 +185,7 @@ func main() {
 	if strings.Contains(esxi_available_space, "T"){
 		esxi_available_space = strings.Trim(esxi_available_space, "T")
 		fmt.Println(esxi_available_space)
-		esxi_available_space_qty , err := strconv.ParseFloat(esxi_available_space, 32)
+		esxi_available_space_qty , err = strconv.ParseFloat(esxi_available_space, 32)
 		check(err)
     	esxi_available_space_qty = esxi_available_space_qty * 1024
 		fmt.Println(esxi_available_space_qty)
