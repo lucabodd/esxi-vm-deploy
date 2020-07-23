@@ -184,11 +184,9 @@ func main() {
 	var esxi_available_space_qty float64
 	if strings.Contains(esxi_available_space, "T"){
 		esxi_available_space = strings.Trim(esxi_available_space, "T")
-		fmt.Println(esxi_available_space)
 		esxi_available_space_qty , err = strconv.ParseFloat(esxi_available_space, 32)
 		check(err)
     	esxi_available_space_qty = esxi_available_space_qty * 1024
-		fmt.Println(esxi_available_space_qty)
 	} else if strings.Contains(esxi_available_space, "G"){
 		esxi_available_space = strings.Trim(esxi_available_space, "G")
 		esxi_available_space_qty , err = strconv.ParseFloat(esxi_available_space, 32)
@@ -197,8 +195,6 @@ func main() {
 
 	vm_disk_size_qty , err := strconv.ParseFloat(vm_disk_size, 32)
 	check(err)
-	fmt.Println(vm_disk_size_qty)
-	fmt.Println(esxi_available_space_qty)
 	if vm_disk_size_qty > esxi_available_space_qty {
 		log.Printf("[-] ESXi host has only %.2fG of free memory and cannot suite vm size", esxi_available_space_qty)
 		kill("ERR: ESXi NOT ENAUGH SPACE")
