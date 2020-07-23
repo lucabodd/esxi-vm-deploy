@@ -197,6 +197,8 @@ func main() {
 
 	vm_disk_size_qty , err := strconv.ParseFloat(vm_disk_size, 32)
 	check(err)
+	fmt.Println(vm_disk_size_qty)
+	fmt.Println(esxi_available_space_qty)
 	if vm_disk_size_qty > esxi_available_space_qty {
 		log.Printf("[-] ESXi host has only %.2fG of free memory and cannot suite vm size", esxi_available_space_qty)
 		kill("ERR: ESXi NOT ENAUGH SPACE")
