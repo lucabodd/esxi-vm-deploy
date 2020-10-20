@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.5] - 2020-10-20
 ### Changed
-- updating debian images in order to match kernel version with repos
+- Updating debian images in order to match kernel version with repos
 
 ## [1.2.1] - 2020-01-29
 ### Added
