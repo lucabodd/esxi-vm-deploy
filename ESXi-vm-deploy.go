@@ -178,7 +178,6 @@ func main() {
 	check(err)
 	verboseOut(res.RawStdout, verbose)
 	esxi_available_space := gjson.Get(res.RawStdout, "plays.0.tasks.0.hosts.*.stdout").Str
-	fmt.Println(esxi_available_space)
 
 	//parse result and convert TB to GB
 	var esxi_available_space_qty float64
