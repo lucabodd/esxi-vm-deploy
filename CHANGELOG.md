@@ -6,15 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.1] - 2017-06-20
+## [1.2.5] - 2020-10-20
+### Added
+- updating debian images in order to match kernel version with repos
+
+## [1.2.1] - 2020-01-29
 ### Added
 - verbose mode
 
-## [1.1.0] - 2017-06-20
+## [1.1.0] - 2019-10-19
 ### Added
 - ESXi disk space check before create .vmdk disk
 
-## [1.0.0] - 2017-06-20
+## [1.0.0] - 2019-06-20
 ### Added
 - CHANGELOG.md
 
