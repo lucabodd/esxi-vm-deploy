@@ -1,5 +1,5 @@
-# ESXi-vm-deploy
-Offering a golang program to automate vm installation on a ESXi host.
+# esxi-vm-deploy
+Offering a golang program to automate vm installation on a esxi host.
 The program will be asking for some informations, templating a .vmk file, creating a virtual disk and installing operating system via embedded BOOTP python server.
 Before starting the automatic deployment of virtual machines you will need to tune up your system in order to be able to run program.
 To run this program you will need:
@@ -9,7 +9,7 @@ To run this program you will need:
 ## Automatic system setup
 If you are running Debian, in order to setup the system and be able to running golang program you can run the script below (needs sudo privilege on host) for automatic setup or you can follow the step-by-step guide in "Manual Setup" section
 ```
-curl https://raw.githubusercontent.com/lucabodd/ESXi-vm-deploy/master/setup/ESXi-vm-deploy-install.sh | bash
+curl https://raw.githubusercontent.com/lucabodd/esxi-vm-deploy/master/setup/esxi-vm-deploy-install.sh | bash
 ```
 
 ## Manual system Setup
@@ -25,10 +25,10 @@ tar -xvf go1.14.4.linux-amd64.tar.gz
 sudo mv go /usr/local
 rm -rf go
 ```
-Install ESXi-vm-deploy
+Install esxi-vm-deploy
 ```
-go get github.com/lucabodd/ESXi-vm-deploy
-go install github.com/lucabodd/ESXi-vm-deploy
+go get github.com/lucabodd/esxi-vm-deploy
+go install github.com/lucabodd/esxi-vm-deploy
 ```
 In some cases you might need to export this environment vars
 ```
@@ -40,7 +40,7 @@ export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 ## Update
 As of today updates will be released on github.com, in order to update the program you can run the following command
 ```
-go get -u github.com/lucabodd/ESXi-vm-deploy
+go get -u github.com/lucabodd/esxi-vm-deploy
 ```
 
 ## Usage
@@ -50,7 +50,7 @@ Before running the program, please consider the following checklist:
 * one helper can deploy one vm per time, if you want to deploy more than one VM at once, you'll need more helpers (or wait :'))
 
 ```
-Usage: ESXi-vm-deploy [OPTIONS]
+Usage: esxi-vm-deploy [OPTIONS]
   -esxi string
         ESXi Hypervisor
   -help
@@ -78,10 +78,10 @@ Note that using less flag than required could lead program into errors
 Omit flags only if you are aware of what are you doin'
 [EXAMPLES]
 - Creation of machine with custom hardware
-ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm
+esxi-vm-deploy --esxi [esxi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm
 -disk-size 16 --vm-cpu 4
 - Creation of machine with default values 3 CPU 50GB Disk 16GB RAM
-ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]
+esxi-vm-deploy --esxi [esxi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]
 
 
 
