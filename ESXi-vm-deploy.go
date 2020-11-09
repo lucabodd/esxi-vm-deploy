@@ -18,7 +18,7 @@ func main() {
 	//set ansible env vars
 	os.Setenv("ANSIBLE_STDOUT_CALLBACK", "json")
 	os.Setenv("ANSIBLE_HOST_KEY_CHECKING", "False")
-	current_version := "1.2.5"
+	current_version := "1.2.6"
 
 	//vars
 	var esxi_host string
@@ -310,7 +310,7 @@ func main() {
 	bar := progressbar.Default(100)
 	for i := 0; i < 100; i++ {
 		bar.Add(1)
-		time.Sleep(1100 * time.Millisecond)
+		time.Sleep(900 * time.Millisecond)
 	}
 	fmt.Println("\n")
 	/*
