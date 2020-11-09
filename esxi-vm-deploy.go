@@ -54,24 +54,24 @@ func main() {
 	if gopath == "" {
 		gopath = build.Default.GOPATH
 	}
-	datadir := gopath+"/src/github.com/lucabodd/ESXi-vm-deploy"
+	datadir := gopath+"/src/github.com/lucabodd/esxi-vm-deploy"
 
 
 	if version {
-		fmt.Println("ESXi-vm-deploy version: ", current_version)
-		fmt.Println("see CHANGELOG.md for latest version changes\ncopy available under "+datadir+"/CHANGELOG.md\nor at https://github.com/lucabodd/ESXi-vm-deploy/blob/master/CHANGELOG.md")
+		fmt.Println("esxi-vm-deploy version: ", current_version)
+		fmt.Println("see CHANGELOG.md for latest version changes\ncopy available under "+datadir+"/CHANGELOG.md\nor at https://github.com/lucabodd/esxi-vm-deploy/blob/master/CHANGELOG.md")
 		kill("")
 	}
 	if esxi_host == "" || vm_name == "" || vm_ipv4 == "" || helper_host == "" || help {
-		fmt.Println("Usage: ESXi-vm-deploy [OPTIONS]")
+		fmt.Println("Usage: esxi-vm-deploy [OPTIONS]")
 		flag.PrintDefaults()
 		fmt.Println("One ore more required flag has not been prodided.")
 		fmt.Println("Note that using less flag than required could lead program into errors \nOmit flags only if you are aware of what are you doin'")
 		fmt.Println("[EXAMPLES]")
 		fmt.Println("- Creation of machine with custom hardware")
-		fmt.Println("ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm-disk-size 16 --vm-cpu 4")
+		fmt.Println("esxi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm-disk-size 16 --vm-cpu 4")
 		fmt.Println("- Creation of machine with default values 3 CPU 50GB Disk 16GB RAM")
-		fmt.Println("ESXi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]")
+		fmt.Println("esxi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]")
 		kill("")
 	}
 	//end of flag parsing
