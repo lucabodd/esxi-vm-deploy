@@ -85,9 +85,6 @@ esxi-vm-deploy --esxi [esxi host defined in ssh config] --helper [unix host defi
 -disk-size 16 --vm-cpu 4
 - Creation of machine with default values 3 CPU 50GB Disk 16GB RAM
 esxi-vm-deploy --esxi [esxi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]
-
-
-
 ```
 
 ## Maintainance
