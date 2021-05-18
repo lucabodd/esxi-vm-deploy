@@ -96,7 +96,6 @@ To do this you need to save the files ```preseed.cfg``` and ```preseed_lvm.cfg``
 download the new installer version from debian repos.
 ```
 wget --recursive --no-parent -nH --cut-dirs=8 --reject html,tmp http://ftp.nl.debian.org/debian/dists/stretch/main/installer-amd64/current/images/netboot/debian-installer/
-
 ```
 
 once downloaded add the  ```preseed.cfg``` and ```preseed_lvm.cfg``` files inside the ```/debian-installer/amd64/``` directory.
