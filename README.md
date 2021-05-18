@@ -6,14 +6,17 @@ To run this program you will need:
 * go > 1.13
 * ansible >= 2.7
 
-## Automatic system setup
+## Installation
+
+### Automatic System Setup
 If you are running Debian, in order to setup the system and be able to running golang program you can run the script below (needs sudo privilege on host) for automatic setup or you can follow the step-by-step guide in "Manual Setup" section
 ```
 curl https://raw.githubusercontent.com/lucabodd/esxi-vm-deploy/master/setup/esxi-vm-deploy-install.sh | bash
 ```
 
-## Manual system Setup
-In order to setup the system and be able to running golang program you will need to follow the following steps:
+### Manual System Setup
+If automatic system setup fails, or you want to setup the system manually, you can setup the system following the steps below.
+In order to setup the system and being able to running golang program you will need to follow the following steps:
 install ansible via package manager (Debian):
 ```
 sudo apt-get install ansible
@@ -86,3 +89,13 @@ esxi-vm-deploy --esxi [esxi host defined in ssh config] --helper [unix host defi
 
 
 ```
+
+## Maintainance
+To maintain this tool you need to periodically update debian netboot images in order to allow the the kernel version of the installer to match the version available in the debian archives.
+To do this you need to save the files ```preseed.cfg``` and ```preseed_lvm.cfg``` located for example in ```esxi-vm-deploy/roles/vm-deploy/files/linux/pybootd/images/debian10-64 ``` in a temporary directory.
+download the new installer version from debian repos.
+```wget --recursive --no-parent -nH --cut-dirs=8 --reject html,tmp http://ftp.nl.debian.org/debian/dists/stretch/main/installer-amd64/current/images/netboot/debian-installer/
+```
+
+once downloaded add the  ```preseed.cfg``` and ```preseed_lvm.cfg``` files inside the ```/debian-installer/amd64/``` directory.
+created the directory replace the new debian installed dir in ```esxi-vm-deploy/roles/vm-deploy/files/linux/pybootd/images/debian10-64 ```
