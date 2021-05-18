@@ -94,7 +94,9 @@ esxi-vm-deploy --esxi [esxi host defined in ssh config] --helper [unix host defi
 To maintain this tool you need to periodically update debian netboot images in order to allow the the kernel version of the installer to match the version available in the debian archives.
 To do this you need to save the files ```preseed.cfg``` and ```preseed_lvm.cfg``` located for example in ```esxi-vm-deploy/roles/vm-deploy/files/linux/pybootd/images/debian10-64 ``` in a temporary directory.
 download the new installer version from debian repos.
-```wget --recursive --no-parent -nH --cut-dirs=8 --reject html,tmp http://ftp.nl.debian.org/debian/dists/stretch/main/installer-amd64/current/images/netboot/debian-installer/
+```
+wget --recursive --no-parent -nH --cut-dirs=8 --reject html,tmp http://ftp.nl.debian.org/debian/dists/stretch/main/installer-amd64/current/images/netboot/debian-installer/
+
 ```
 
 once downloaded add the  ```preseed.cfg``` and ```preseed_lvm.cfg``` files inside the ```/debian-installer/amd64/``` directory.
