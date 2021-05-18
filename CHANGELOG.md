@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.7] - 2020-10-20
+### Changed
+- updating images for Debian10
+
 ## [1.2.6] - 2020-10-20
 ### Changed
 - changing repo name and shortening sleep time

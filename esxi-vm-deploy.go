@@ -18,7 +18,7 @@ func main() {
 	//set ansible env vars
 	os.Setenv("ANSIBLE_STDOUT_CALLBACK", "json")
 	os.Setenv("ANSIBLE_HOST_KEY_CHECKING", "False")
-	current_version := "1.2.6"
+	current_version := "1.2.7"
 
 	//vars
 	var esxi_host string
