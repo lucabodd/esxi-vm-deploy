@@ -6,10 +6,14 @@ To run this program you will need:
 * go > 1.13
 * ansible >= 2.7
 
+## Download&Run!
+You can download and run precompiled binaries by clicking [here](https://github.com/lucabodd/esxi-vm-deploy/releases/tag/1.2.7) and selecting your running platform
+
 ## Installation
+If precompiled binaries are not working for you, you can read de guide below for the manual installation.
 
 ### Automatic System Setup
-If you are running Debian, in order to setup the system and be able to running golang program you can run the script below (needs sudo privilege on host) for automatic setup or you can follow the step-by-step guide in "Manual Setup" section
+If you are running ***Debian***, in order to setup the system and be able to running golang program you can run the script below (needs sudo privilege on host) for automatic setup or you can follow the step-by-step guide in "Manual Setup" section
 ```
 curl https://raw.githubusercontent.com/lucabodd/esxi-vm-deploy/master/setup/esxi-vm-deploy-install.sh | bash
 ```
