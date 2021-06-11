@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.8] - 2021-06-11
+### Changed
+- Setting LVM as default volume manager vor both debian10-64 and debian9-64
+
 ## [1.2.7] - 2020-10-20
 ### Changed
 - Updating debian10-64 images in order to match kernel version with repos
