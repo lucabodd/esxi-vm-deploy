@@ -13,7 +13,7 @@ go version
 echo "Environment settings"
 go env
 echo "Installing scanner ..."
-go get github.com/lucabodd/ESXi-vm-deploy
-go install github.com/lucabodd/ESXi-vm-deploy
+go get github.com/lucabodd/esxi-vm-deploy
+go install github.com/lucabodd/esxi-vm-deploy
 echo "Done!"
 echo "please 'source ~/.bashrc' "

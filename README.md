@@ -15,7 +15,7 @@ If precompiled binaries are not working for you, you can read de guide below for
 ### Automatic System Setup
 If you are running ***Debian***, in order to setup the system and be able to running golang program you can run the script below (needs sudo privilege on host) for automatic setup or you can follow the step-by-step guide in "Manual Setup" section
 ```
-curl https://raw.githubusercontent.com/lucabodd/esxi-vm-deploy/master/setup/esxi-vm-deploy-install.sh | bash
+curl https://raw.githubusercontent.com/lucabodd/esxi-vm-deploy/master/setup/ESXi-vm-deploy-install.sh | bash
 ```
 
 ### Manual System Setup
