@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.10] - 2021-10-14
+### Changed
+- Changing default keymap to 'en' in preseed.cfg
+
 ## [1.2.9] - 2021-10-14
 ### Changed
 - Updating debian10-64 images in order to match kernel version with repos
