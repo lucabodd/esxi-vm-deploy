@@ -95,39 +95,33 @@ d-i partman-auto/choose_recipe select boot-root
 d-i partman-auto-lvm/new_vg_name string vg00
 
 
-d-i partman-auto/expert_recipe string     \
-  multi-cnx ::                            \
-    128 512 256 ext2                      \
-    \$defaultignore{ }                    \
-    method{ format }                      \
-    format{ }                             \
-    use_filesystem{ }                     \
-    filesystem{ ext2 }                    \
-    mountpoint{ /boot }                   \
-    .                                     \
-    16000 800 -1  ext4                    \
-    \$lvmok{ }                            \
-    method{ format }                      \
-    format{ }                             \
-    use_filesystem{ }                     \
-    \$default_filesystem{ }               \
-    mountpoint{ / }                       \
-    .                                     \
-    96 512 200% linux-swap                \
-    \$lvmok{ }                            \
-    \$reusemethod{ }                      \
-    method{ swap }                        \
-    format{ }                             \
-    .                                     \
-    1000 300 2000 ext4                    \
-    \$lvmok{ }                            \
-    method{ format }                      \
-    format{ }                             \
-    use_filesystem{ }                     \
-    \$default_filesystem{ }               \
-    mountpoint{ /tmp }                    \
-    .                                     \
-
+d-i partman-auto/expert_recipe string \
+boot-root :: \
+200 10 200 ext4\
+$defaultignore{ }\
+method{ format }\
+format{ }\
+use_filesystem{ }\
+filesystem{ ext4 }\
+mountpoint{ /boot }\
+.\
+2048 60 2048 swap \
+$defaultignore{ } \
+$lvmok{ } \
+format{ } \
+lv_name{ swap } \
+method{ swap } \
+. \
+2000 20 -1 ext4\
+$defaultignore{ } \
+$lvmok{ } \
+lv_name{ root } \
+method{ format } \
+format{ } \
+use_filesystem{ } \
+filesystem{ ext4 } \
+mountpoint{ / } \
+. \
 
 
 
