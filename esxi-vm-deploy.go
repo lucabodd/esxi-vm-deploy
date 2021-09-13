@@ -210,6 +210,11 @@ func main() {
 	*/
 	log.Println("[+] RA passed, deploying .vmx and allocating disk space (thick)")
 	log.Println("[*] Deploying .vmx file")
+	//vmware still not supporting debian 11 this is a patch and shall be removed in the future
+	vm_os_temp := vm_os
+	if vm_os == "debian11-64" {
+		vm_os = "debian10-64"
+	}
 	playbook = &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/esxi-deploy-vmx.yml",
 		ConnectionOptions: &ansibler.PlaybookConnectionOptions{},
@@ -232,6 +237,8 @@ func main() {
 	err = res.PlaybookResultsChecks()
 	check(err)
 	verboseOut(res.RawStdout, verbose)
+	//vmware still not supporting debian 11 this is a patch and shall be removed in the future
+	vm_os = vm_os_temp
 	log.Println("[+] Virtual machine created. disk initialization completed")
 	log.Println("[*] Retrieveing VM mac address")
 	log.Println("[*] Retrieveing Assigned VM Hypervisor ID")
