@@ -1,7 +1,7 @@
                   0fWelcome to Debian GNU/Linux!07                                09F107
 
 This is a Debian 10 (buster) installation netboot image.
-It was built on 20190702+deb10u9.
+It was built on 20190702+deb10u10.
 
 0fHELP INDEX07
 
