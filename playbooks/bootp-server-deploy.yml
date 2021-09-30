@@ -62,7 +62,7 @@
   - name: "Uploading debian image for the selected virtual machine OS"
     synchronize:
       src: "../roles/vm-deploy/files/linux/images/{{vm_os}}"
-      dest: "/dev/shm/pybootd/images/{{vm_os}}"
+      dest: "/dev/shm/pybootd/images/"
 
   - name: "Uploading Preseed file"
     copy:
