@@ -59,6 +59,16 @@
       src: ../roles/vm-deploy/files/linux/pybootd/
       dest: /dev/shm/pybootd/
 
+  - name: "Uploading debian image for the selected virtual machine OS"
+    synchronize:
+      src: "../roles/vm-deploy/files/linux/images/{{vm_os}}"
+      dest: "/dev/shm/pybootd/images/{{vm_os}}"
+
+  - name: "Uploading Preseed file"
+    synchronize:
+      src: "../roles/vm-deploy/files/linux/preseed.cfgs/preseed.cfg"
+      dest: "/dev/shm/pybootd/images/{{vm_os}}/debian-installer/amd64/"
+
   #getting net info from the helper machine
   - name: "Netinfo: get network gateway"
     shell: cat /etc/network/interfaces | grep gateway | awk '{ print $2 }' | awk -F "/" '{ print $1 }'
