@@ -63,14 +63,17 @@
   - name: "Upload PXE files"
     synchronize:
       src: "../roles/vm-deploy/files/linux/pxe/"
-      dest: "../roles/vm-deploy/files/linux/images/{{vm_os}}"
+      dest: "/dev/shm/pybootd/images/{{vm_os}}/"
 
-  - name: "If use mirror is set to false, upload debian image for the selected virtual machine OS"
+  - name: "If use mirror is set to false, upload debian installer for the selected virtual machine OS"
     synchronize:
       src: "../roles/vm-deploy/files/linux/images/{{vm_os}}"
       dest: "/dev/shm/pybootd/images/"
     when: use_mirror==false
 
+  - name: "If use mirror is set to true, download installer from a mirror"
+    shell: "wget -P /dev/shm/pybootd/images/{{vm-os}} --recursive --no-parent -nH --cut-dirs=8 --reject html,tmp {{mirror}}"
+    when: use_mirror==true
 
   - name: "Uploading Preseed file"
     copy:
