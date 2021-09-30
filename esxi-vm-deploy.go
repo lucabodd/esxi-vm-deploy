@@ -103,7 +103,7 @@ func main() {
 	}
 	res, _ := playbook.Run()
 	verboseOut(res.RawStdout, verbose)
-	err = res.PlaybookResultsChecks()
+	err := res.PlaybookResultsChecks()
 	check(err)
 	duplicate_stdout := gjson.Get(res.RawStdout, "plays.0.tasks.1.hosts.*.stdout")
 	duplicate := duplicate_stdout.Int()
