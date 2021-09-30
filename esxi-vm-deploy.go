@@ -101,10 +101,11 @@ func main() {
 			},
 		},
 	}
-	res, _ := playbook.Run()
-	verboseOut(res.RawStdout, verbose)
-	err := res.PlaybookResultsChecks()
+	res, err := playbook.Run()
 	check(err)
+	err = res.PlaybookResultsChecks()
+	check(err)
+	verboseOut(res.RawStdout, verbose)
 	duplicate_stdout := gjson.Get(res.RawStdout, "plays.0.tasks.1.hosts.*.stdout")
 	duplicate := duplicate_stdout.Int()
 	if duplicate > 0 {
@@ -122,10 +123,11 @@ func main() {
 		},
 	}
 	res = &ansibler.PlaybookResults{}
-	res,_ = playbook.Run()
-	verboseOut(res.RawStdout, verbose)
+	res,err = playbook.Run()
+	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
+	verboseOut(res.RawStdout, verbose)
 	esxi_vmnet := gjson.Get(res.RawStdout, "plays.0.tasks.0.hosts.*.stdout_lines")
 	vmnets := esxi_vmnet.Array()
 	esxi_datastores := gjson.Get(res.RawStdout, "plays.0.tasks.1.hosts.*.stdout_lines")
@@ -177,10 +179,11 @@ func main() {
 		},
 	}
 	res = &ansibler.PlaybookResults{}
-	res,_ = playbook.Run()
-	verboseOut(res.RawStdout, verbose)
+	res,err = playbook.Run()
+	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
+	verboseOut(res.RawStdout, verbose)
 	esxi_available_space := gjson.Get(res.RawStdout, "plays.0.tasks.0.hosts.*.stdout").Str
 
 	//parse result and convert TB to GB
@@ -212,7 +215,7 @@ func main() {
 		#							VMX DEPLOYMENT  							   #
 		############################################################################
 	*/
-	log.Println("[+] Requirements Analysis passed, deploying .vmx and allocating disk space (thick)")
+	log.Println("[+] RA passed, deploying .vmx and allocating disk space (thick)")
 	log.Println("[*] Deploying .vmx file")
 	//vmware still not supporting debian 11 this is a patch and shall be removed in the future
 	vm_os_temp := vm_os
@@ -236,10 +239,11 @@ func main() {
 		},
 	}
 	res = &ansibler.PlaybookResults{}
-	res, _ = playbook.Run()
-	verboseOut(res.RawStdout, verbose)
+	res, err = playbook.Run()
+	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
+	verboseOut(res.RawStdout, verbose)
 	//vmware still not supporting debian 11 this is a patch and shall be removed in the future
 	vm_os = vm_os_temp
 	log.Println("[+] Virtual machine created. disk initialization completed")
@@ -304,10 +308,10 @@ func main() {
 	}
 	res = &ansibler.PlaybookResults{}
 	res, err = playbook.Run()
-	verboseOut(res.RawStdout, verbose)
 	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
+	verboseOut(res.RawStdout, verbose)
 	log.Println("[+] BOOTP server running")
 	/*
 		############################################################################
@@ -331,10 +335,11 @@ func main() {
 		},
 	}
 	res = &ansibler.PlaybookResults{}
-	res, _ = playbook.Run()
-	verboseOut(res.RawStdout, verbose)
+	res, err = playbook.Run()
+	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
+	verboseOut(res.RawStdout, verbose)
 	log.Println("[+] VM " + vm_id + " powered on as " + vm_name)
 	/*
 		############################################################################
@@ -362,11 +367,11 @@ func main() {
 			Inventory: helper_host + ",",
 		},
 	}
-	res, _ = playbook.Run()
-  verboseOut(res.RawStdout, verbose)
+	res, err = playbook.Run()
+    check(err)
 	err = res.PlaybookResultsChecks()
-  check(err)
-
+    check(err)
+	verboseOut(res.RawStdout, verbose)
 	log.Println("[+] Cleanup Completed")
 	/*
 		############################################################################
