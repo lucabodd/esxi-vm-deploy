@@ -52,37 +52,39 @@ Before running the program, please consider the following checklist:
 
 ```
 Usage: esxi-vm-deploy [OPTIONS]
+  -H string
+        BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine
+  -cpu string
+        Specify RAM size (default "2")
+  -disk-size string
+        Virtual machine Disk size (default "50")
   -esxi string
         ESXi Hypervisor
   -help
         prints this help message
-  -helper string
-        BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine
-  -verbose
-        enable verbose mode
+  -ip string
+        Virtual machine IP address
+  -name string
+        Specify virtual machine name
+  -os string
+        Specify virtual machine OS available: debian9-64, debian10-64, debian11-64 (default "debian11-64")
+  -ram string
+        Specify RAM size (default "16")
+  -use-custom-mirror string
+        Define a custom mirror where images will be retriven from. Mirror must be defined as full path, point to amd64 directori, which must contain initrd.gz file (eg: http://ftp.nl.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/debian-installer or https://d-i.debian.org/daily-images/amd64/daily/netboot/debian-installer/amd64/ )
+  -use-default-mirror
+        Download debian images from mirror, default mirror used is http://ftp.nl.debian.org if you want to use an alternative mirror use --mirror flag
+  -v    enable verbose mode
   -version
         Display current version of script
-  -vm-cpu string
-        Specify RAM size (default "2")
-  -vm-disk-size string
-        Virtual machine Disk size (default "50")
-  -vm-ip string
-        Virtual machine IP address
-  -vm-name string
-        Specify virtual machine name
-  -vm-os string
-        Specify virtual machine OS available: debian9-64, debian10-64 (default "debian10-64")
-  -vm-ram string
-        Specify RAM size (default "16")
 One ore more required flag has not been prodided.
 Note that using less flag than required could lead program into errors
 Omit flags only if you are aware of what are you doin'
 [EXAMPLES]
 - Creation of machine with custom hardware
-esxi-vm-deploy --esxi [esxi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm
--disk-size 16 --vm-cpu 4
+esxi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm-disk-size 16 --vm-cpu 4
 - Creation of machine with default values 3 CPU 50GB Disk 16GB RAM
-esxi-vm-deploy --esxi [esxi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]
+esxi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]
 ```
 
 ## Maintainance

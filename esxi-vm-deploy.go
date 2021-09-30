@@ -77,9 +77,13 @@ func main() {
 		fmt.Println("Note that using less flag than required could lead program into errors \nOmit flags only if you are aware of what are you doin'")
 		fmt.Println("[EXAMPLES]")
 		fmt.Println("- Creation of machine with custom hardware")
-		fmt.Println("esxi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm-disk-size 16 --vm-cpu 4")
+		fmt.Println("esxi-vm-deploy --esxi [ESXi host defined in ssh config] -H [unix host defined in ssh config]  --ip [ip of new machine] --name [name of new machine] --ram 8  --disk-size 16 --cpu 4")
 		fmt.Println("- Creation of machine with default values 3 CPU 50GB Disk 16GB RAM")
-		fmt.Println("esxi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]")
+		fmt.Println("esxi-vm-deploy --esxi [ESXi host defined in ssh config] -H [unix host defined in ssh config]  --ip [ip of new machine] --name [name of new machine]")
+		fmt.Println("- Creation of machine with default values 3 CPU 50GB Disk 16GB RAM using the default mirror (http://ftp.nl.debian.org/)")
+		fmt.Println("esxi-vm-deploy --esxi [ESXi host defined in ssh config] -H [unix host defined in ssh config]  --ip [ip of new machine] --name [name of new machine] --use-default-mirror")
+		fmt.Println("- Creation of machine with default values 3 CPU 50GB Disk 16GB RAM using a custom mirror")
+		fmt.Println("esxi-vm-deploy --esxi [ESXi host defined in ssh config] -H [unix host defined in ssh config]  --ip [ip of new machine] --name [name of new machine] --os debian9-64 --use-custom-mirror http://ftp.debian.org/debian/dists/stretch/main/installer-amd64/current/images/netboot/")
 		kill("")
 	}
 	//end of flag parsing
@@ -215,7 +219,7 @@ func main() {
 		#							VMX DEPLOYMENT  							   #
 		############################################################################
 	*/
-	log.Println("[+] RA passed, deploying .vmx and allocating disk space (thick)")
+	log.Println("[+] Requirements analysis passed, deploying .vmx and allocating disk space (thick)")
 	log.Println("[*] Deploying .vmx file")
 	//vmware still not supporting debian 11 this is a patch and shall be removed in the future
 	vm_os_temp := vm_os
