@@ -65,9 +65,9 @@
       dest: "/dev/shm/pybootd/images/{{vm_os}}"
 
   - name: "Uploading Preseed file"
-    synchronize:
+    copy:
       src: "../roles/vm-deploy/files/linux/preseed.cfgs/preseed.cfg"
-      dest: "/dev/shm/pybootd/images/{{vm_os}}/debian-installer/amd64/"
+      dest: "/dev/shm/pybootd/images/{{vm_os}}/debian-installer/amd64/preseed.cfg"
 
   #getting net info from the helper machine
   - name: "Netinfo: get network gateway"
