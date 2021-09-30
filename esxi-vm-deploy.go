@@ -12,13 +12,14 @@ import (
 	"strings"
 	"strconv"
 	"time"
+	"os/exec"
 )
 
 func main() {
 	//set ansible env vars
 	os.Setenv("ANSIBLE_STDOUT_CALLBACK", "json")
 	os.Setenv("ANSIBLE_HOST_KEY_CHECKING", "False")
-	current_version := "1.2.12"
+	current_version := "2.0.0"
 
 	//vars
 	var esxi_host string
@@ -36,6 +37,7 @@ func main() {
 	var help bool
 	var verbose bool
 	var version bool
+	var vi_preseed bool
 
 	//Flag parsing
 	flag.StringVar(&esxi_host, "esxi", "", "ESXi Hypervisor")
@@ -45,12 +47,13 @@ func main() {
 	flag.StringVar(&vm_cpu, "cpu", "2", "Specify RAM size")
 	flag.StringVar(&vm_ipv4, "ip", "", "Virtual machine IP address")
 	flag.StringVar(&vm_disk_size, "disk-size", "50", "Virtual machine Disk size")
-	flag.StringVar(&helper_host, "H", "", "BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine")
+	flag.StringVar(&helper_host, "helper", "", "BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine")
 	flag.BoolVar(&use_default_mirror, "use-default-mirror", false, "Download debian images from mirror, default mirror used is http://ftp.nl.debian.org if you want to use an alternative mirror use --mirror flag")
 	flag.StringVar(&use_custom_mirror, "use-custom-mirror", "", "Define a custom mirror where images will be retriven from. Mirror must be defined as full path, point to amd64 directori, which must contain initrd.gz file (eg: http://ftp.nl.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/debian-installer or https://d-i.debian.org/daily-images/amd64/daily/netboot/debian-installer/amd64/ )")
 	flag.BoolVar(&version, "version", false, "Display current version of script")
 	flag.BoolVar(&help, "help", false, "prints this help message")
 	flag.BoolVar(&verbose, "v", false, "enable verbose mode")
+	flag.BoolVar(&vi_preseed, "vi-preseed", false, "edit local preseed file (changes will be overwritten during updates)")
 	flag.Parse()
 
 	// retrive bin directory
@@ -65,6 +68,13 @@ func main() {
 		fmt.Println("esxi-vm-deploy version: ", current_version)
 		fmt.Println("see CHANGELOG.md for latest version changes\ncopy available under "+datadir+"/CHANGELOG.md\nor at https://github.com/lucabodd/esxi-vm-deploy/blob/master/CHANGELOG.md")
 		kill("")
+	}
+	if vi_preseed {
+		cmd := exec.Command("vim", "test.txt")
+    cmd.Stdin = os.Stdin
+    cmd.Stdout = os.Stdout
+    err := cmd.Run()
+		check(err)
 	}
 	if use_default_mirror && use_custom_mirror!="" {
 		fmt.Println("[*] Unable to determine the image source to use. User selected both --use-custom-mirror and --use-default-mirror. Using custom mirror")
@@ -315,7 +325,6 @@ func main() {
 	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
-	verboseOut(res.RawStdout, verbose)
 	log.Println("[+] BOOTP server running")
 	/*
 		############################################################################
@@ -362,7 +371,7 @@ func main() {
 		#							FILE CLEANUP 		 						   #
 		############################################################################
 	*/
-	log.Println("[*] Running Helper deplfiles cleanup")
+	log.Println("[*] Running Helper deploy files cleanup")
 
 	playbook = &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/helper-depfiles-cleanup.yml",

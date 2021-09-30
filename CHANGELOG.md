@@ -6,17 +6,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.10] - 2021-10-14
+## [1.2.10] - 2021-09-30
+### Changed
+- Renamed virtual machine flags with shorter names, removing 'vm-' prefix
+- Installer images location/structure
+- Unified preseed.cfg file
+- Unified pxe configurations
+- Prebuilt ldlinux.c32
+- Python libs netifaces and numpy are now uploaded from the local package
+- Upload module use less network bandwidth discriminating between installer versions
+
+### Added
+- Debian installers are now downloadable from online sources using a default mirror (ftp.debian.nl) using --use-default-mirror flag
+- Debian installers are now downloadable from online sources using a custor mirror given from command line using --use-custom-mirror flag (refer to --help for further details)
+- --vi-preseed allow users to edit package's preseed file (local changes will be overwritten during updates)
+
+
+## [1.2.10] - 2021-08-14
 ### Changed
 - Updating debian10-64 images in order to match kernel version with repos
 ### Added
 - debian11-64 images
 
-## [1.2.10] - 2021-10-14
+## [1.2.10] - 2021-07-14
 ### Changed
 - Changing default keymap to 'en' in preseed.cfg
 
-## [1.2.9] - 2021-10-14
+## [1.2.9] - 2021-06-14
 ### Changed
 - Updating debian10-64 images in order to match kernel version with repos
 
