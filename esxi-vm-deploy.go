@@ -31,8 +31,8 @@ func main() {
 	var vm_ipv4 string
 	var vm_disk_size string
 	var helper_host string
-	var custom_mirror string
-	var use_mirror bool
+	var use_custom_mirror string
+	var use_default_mirror bool
 	var help bool
 	var verbose bool
 	var version bool
