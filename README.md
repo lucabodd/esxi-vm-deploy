@@ -52,8 +52,6 @@ Before running the program, please consider the following checklist:
 
 ```
 Usage: esxi-vm-deploy [OPTIONS]
-  -H string
-        BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine
   -cpu string
         Specify RAM size (default "2")
   -disk-size string
@@ -62,6 +60,8 @@ Usage: esxi-vm-deploy [OPTIONS]
         ESXi Hypervisor
   -help
         prints this help message
+  -helper string
+        BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine
   -ip string
         Virtual machine IP address
   -name string
@@ -77,6 +77,8 @@ Usage: esxi-vm-deploy [OPTIONS]
   -v    enable verbose mode
   -version
         Display current version of script
+  -vi-preseed
+        edit local preseed file (changes will be overwritten during updates)
 One ore more required flag has not been prodided.
 Note that using less flag than required could lead program into errors
 Omit flags only if you are aware of what are you doin'
