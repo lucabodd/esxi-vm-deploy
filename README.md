@@ -82,18 +82,19 @@ Note that using less flag than required could lead program into errors
 Omit flags only if you are aware of what are you doin'
 [EXAMPLES]
 - Creation of machine with custom hardware
-esxi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine] --vm-ram 8  --vm-disk-size 16 --vm-cpu 4
+esxi-vm-deploy --esxi [ESXi host defined in ssh config] -H [unix host defined in ssh config]  --ip [ip of new machine] --name [name of new machine] --ram 8  --disk-size 16 --cpu 4
 - Creation of machine with default values 3 CPU 50GB Disk 16GB RAM
-esxi-vm-deploy --esxi [ESXi host defined in ssh config] --helper [unix host defined in ssh config]  --vm-ip [ip of new machine] --vm-name [name of new machine]
+esxi-vm-deploy --esxi [ESXi host defined in ssh config] -H [unix host defined in ssh config]  --ip [ip of new machine] --name [name of new machine]
+- Creation of machine with default values 3 CPU 50GB Disk 16GB RAM using the default mirror (http://ftp.nl.debian.org/)
+esxi-vm-deploy --esxi [ESXi host defined in ssh config] -H [unix host defined in ssh config]  --ip [ip of new machine] --name [name of new machine] --use-default-mirror
+- Creation of machine with default values 3 CPU 50GB Disk 16GB RAM using a custom mirror
+esxi-vm-deploy --esxi [ESXi host defined in ssh config] -H [unix host defined in ssh config]  --ip [ip of new machine] --name [name of new machine] --os debian9-64 --use-custom-mirror http://ftp.debian.org/debian/dists/stretch/main/installer-amd64/current/images/netboot/
 ```
 
 ## Maintainance
 To maintain this tool you need to periodically update debian netboot images in order to allow the the kernel version of the installer to match the version available in the debian archives.
-To do this you need to save the files ```preseed.cfg``` and ```preseed_lvm.cfg``` located for example in ```esxi-vm-deploy/roles/vm-deploy/files/linux/pybootd/images/debian10-64 ``` in a temporary directory.
-download the new installer version from debian repos.
+Download the new installer version from debian repos.
 ```
 wget --recursive --no-parent -nH --cut-dirs=8 --reject html,tmp http://ftp.nl.debian.org/debian/dists/stretch/main/installer-amd64/current/images/netboot/debian-installer/
 ```
-
-once downloaded add the  ```preseed.cfg``` and ```preseed_lvm.cfg``` files inside the ```/debian-installer/amd64/``` directory.
-created the directory replace the new debian installed dir in ```esxi-vm-deploy/roles/vm-deploy/files/linux/pybootd/images/debian10-64 ```
+and put the debian-installer directory inside ```esxi-vm-deploy/roles/vm-deploy/files/linux/images/debian[version]-64```
