@@ -212,7 +212,7 @@ func main() {
 		#							VMX DEPLOYMENT  							   #
 		############################################################################
 	*/
-	log.Println("[+] RA passed, deploying .vmx and allocating disk space (thick)")
+	log.Println("[+] Requirements Analysis passed, deploying .vmx and allocating disk space (thick)")
 	log.Println("[*] Deploying .vmx file")
 	//vmware still not supporting debian 11 this is a patch and shall be removed in the future
 	vm_os_temp := vm_os
@@ -303,8 +303,9 @@ func main() {
 		},
 	}
 	res = &ansibler.PlaybookResults{}
-	res, _ = playbook.Run()
+	res, err = playbook.Run()
 	verboseOut(res.RawStdout, verbose)
+	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
 	log.Println("[+] BOOTP server running")
