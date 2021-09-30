@@ -294,7 +294,6 @@ func main() {
 		use_mirror=true
 	}
 
-	fmt.Println("MIRROR "+mirror )
 	playbook = &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/bootp-server-deploy.yml",
 		ConnectionOptions: &ansibler.PlaybookConnectionOptions{},
@@ -312,6 +311,7 @@ func main() {
 	}
 	res = &ansibler.PlaybookResults{}
 	res, err = playbook.Run()
+	verboseOut(res.RawStdout, verbose)
 	check(err)
 	err = res.PlaybookResultsChecks()
 	check(err)
