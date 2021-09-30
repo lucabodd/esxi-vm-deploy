@@ -75,6 +75,7 @@ func main() {
     cmd.Stdout = os.Stdout
     err := cmd.Run()
 		check(err)
+		kill("[+] Saved")
 	}
 	if use_default_mirror && use_custom_mirror!="" {
 		fmt.Println("[*] Unable to determine the image source to use. User selected both --use-custom-mirror and --use-default-mirror. Using custom mirror")
