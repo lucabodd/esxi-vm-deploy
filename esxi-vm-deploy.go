@@ -70,7 +70,7 @@ func main() {
 		kill("")
 	}
 	if vi_preseed {
-		cmd := exec.Command("vim", "test.txt")
+		cmd := exec.Command("vim", datadir+"/roles/vm-deploy/files/linux/preseed.cfgs/preseed.cfg")
     cmd.Stdin = os.Stdin
     cmd.Stdout = os.Stdout
     err := cmd.Run()
