@@ -31,22 +31,26 @@ func main() {
 	var vm_ipv4 string
 	var vm_disk_size string
 	var helper_host string
+	var custom_mirror string
+	var use_mirror bool
 	var help bool
 	var verbose bool
 	var version bool
 
 	//Flag parsing
 	flag.StringVar(&esxi_host, "esxi", "", "ESXi Hypervisor")
-	flag.StringVar(&vm_name, "vm-name", "", "Specify virtual machine name")
-	flag.StringVar(&vm_os, "vm-os", "debian11-64", "Specify virtual machine OS available: debian9-64, debian10-64")
-	flag.StringVar(&vm_ram, "vm-ram", "16", "Specify RAM size")
-	flag.StringVar(&vm_cpu, "vm-cpu", "2", "Specify RAM size")
-	flag.StringVar(&vm_ipv4, "vm-ip", "", "Virtual machine IP address")
-	flag.StringVar(&vm_disk_size, "vm-disk-size", "50", "Virtual machine Disk size")
-	flag.StringVar(&helper_host, "helper", "", "BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine")
+	flag.StringVar(&vm_name, "name", "", "Specify virtual machine name")
+	flag.StringVar(&vm_os, "os", "debian11-64", "Specify virtual machine OS available: debian9-64, debian10-64, debian11-64")
+	flag.StringVar(&vm_ram, "ram", "16", "Specify RAM size")
+	flag.StringVar(&vm_cpu, "cpu", "2", "Specify RAM size")
+	flag.StringVar(&vm_ipv4, "ip", "", "Virtual machine IP address")
+	flag.StringVar(&vm_disk_size, "disk-size", "50", "Virtual machine Disk size")
+	flag.StringVar(&helper_host, "H", "", "BOOTP server address, specified host will provide configurations to booting (PXE) virtual machine")
+	flag.BoolVar(&use_default_mirror, "use-default-mirror", false, "Download debian images from mirror, default mirror used is http://ftp.nl.debian.org if you want to use an alternative mirror use --mirror flag")
+	flag.StringVar(&use_custom_mirror, "use-custom-mirror", "", "Define a custom mirror where images will be retriven from. Mirror must be defined as full path, point to amd64 directori, which must contain initrd.gz file (eg: http://ftp.nl.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/debian-installer or https://d-i.debian.org/daily-images/amd64/daily/netboot/debian-installer/amd64/ )")
 	flag.BoolVar(&version, "version", false, "Display current version of script")
 	flag.BoolVar(&help, "help", false, "prints this help message")
-	flag.BoolVar(&verbose, "verbose", false, "enable verbose mode")
+	flag.BoolVar(&verbose, "v", false, "enable verbose mode")
 	flag.Parse()
 
 	// retrive bin directory
@@ -61,6 +65,10 @@ func main() {
 		fmt.Println("esxi-vm-deploy version: ", current_version)
 		fmt.Println("see CHANGELOG.md for latest version changes\ncopy available under "+datadir+"/CHANGELOG.md\nor at https://github.com/lucabodd/esxi-vm-deploy/blob/master/CHANGELOG.md")
 		kill("")
+	}
+	if use_default_mirror && use_custom_mirror!="" {
+		fmt.Println("[*] Unable to determine the image source to use. User selected both --use-custom-mirror and --use-default-mirror. Using custom mirror")
+		fmt.Println("[*] Warning: flags are misconfigured.")
 	}
 	if esxi_host == "" || vm_name == "" || vm_ipv4 == "" || helper_host == "" || help {
 		fmt.Println("Usage: esxi-vm-deploy [OPTIONS]")
@@ -81,7 +89,7 @@ func main() {
 		#							VARS COLLECTION 							   #
 		############################################################################
 	*/
-	log.Println("[*] Checking System...")
+	log.Println("[*] Environment Prechecks...")
 
 	playbook := &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/esxi-check-duplicate.yml",
@@ -101,8 +109,7 @@ func main() {
 	duplicate_stdout := gjson.Get(res.RawStdout, "plays.0.tasks.1.hosts.*.stdout")
 	duplicate := duplicate_stdout.Int()
 	if duplicate > 0 {
-		log.Println("[-] A VM with name "+vm_name+" is already registered")
-		kill("ERR: VMNAME ALREADY REGISTERED")
+		kill("[-] ERROR: A virtual machine with the same name already exis")
 	}
 
 	fmt.Println("[+] System checks passed ... starting")
@@ -195,8 +202,7 @@ func main() {
 	vm_disk_size_qty , err := strconv.ParseFloat(vm_disk_size, 32)
 	check(err)
 	if vm_disk_size_qty > esxi_available_space_qty {
-		log.Printf("[-] ESXi host has only %.2fG of free memory and cannot suite vm size", esxi_available_space_qty)
-		kill("ERR: ESXi NOT ENAUGH SPACE")
+		kill("[- ]ERROR: ESXi host has only %.2fG of free memory and cannot suite vm size", esxi_available_space_qty)
 	}
 	/*
 		############################################################################
@@ -259,6 +265,29 @@ func main() {
 		############################################################################
 	*/
 	log.Println("[*] uploading BOOTP server")
+	mirror:=""
+
+	if use_default_mirror {
+		switch vm_os {
+		case "debian11-64":
+			mirror="http://ftp.nl.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/debian-installer/"
+		case "debian10-64":
+			mirror="http://ftp.nl.debian.org/debian/dists/buster/main/installer-amd64/current/images/netboot/debian-installer"
+		case "debian9-64":
+			mirror="http://ftp.nl.debian.org/debian/dists/stretch/main/installer-amd64/current/images/netboot/debian-installer/"
+		}
+	}
+	if use_custom_mirror!="" {
+		mirror=use_custom_mirror
+	}
+
+	//use bool var in order to track in ansible wether to use a mirror or upload images
+	if mirror == "" {
+		use_mirror:=false
+	} else {
+		use_mirror:=true
+	}
+
 
 	playbook = &ansibler.PlaybookCmd{
 		Playbook:          datadir+"/playbooks/bootp-server-deploy.yml",
@@ -270,6 +299,8 @@ func main() {
 				"vm_mac_addr": vm_mac_addr,
 				"vm_name":     vm_name,
 				"vm_os":        vm_os,
+				"use_mirror":		use_mirror,
+				"mirror":		mirror,
 			},
 		},
 	}

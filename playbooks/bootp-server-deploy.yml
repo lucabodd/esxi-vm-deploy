@@ -38,6 +38,19 @@
     shell: python3.7 setup.py install
     args:
       chdir: /tmp/netifaces-0.10.9/
+
+  #------------------------+
+  # killing server if is up|
+  #------------------------+
+  - name: "looking for server pid"
+    shell: ps aux | grep pybootd.py | grep -v grep | awk '{ print $2 }'
+    register: pybootd_pid
+    ignore_errors: yes
+
+  - name: "killing the server"
+    command: kill -9 "{{ pybootd_pid.stdout }}"
+    ignore_errors: yes
+
   #-----------------------+
   # uplo. & templ. server |
   #-----------------------+
