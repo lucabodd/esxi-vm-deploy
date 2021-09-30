@@ -20,24 +20,37 @@
     vars:
       python_version: 3.7.4
 
+  - name: checking if numpy is installed
+    shell: pip3.7 --disable-pip-version-check list | grep numpy
+    register: numpy_installation_check
+    ignore_errors: yes
+
+  - name: checking if netifaces is installed
+    shell: pip3.7 --disable-pip-version-check list | grep netifaces
+    register: netifaces_installation_check
+    ignore_errors: yes
+
   - name: "Downloading numpy library"
-    get_url:
-      url: http://aptmirror.kaleyra.com/python/pypi/numpy-1.17.2-cp37-cp37m-manylinux1_x86_64.whl
+    copy:
+      src: ../roles/vm-deploy/files/linux/pythonlibs/numpy-1.17.2-cp37-cp37m-manylinux1_x86_64.whl
       dest: /tmp/
+    when: numpy_installation_check.stdout == ""
 
   - name: "installing numpy"
     command: pip3.7 install /tmp/numpy-1.17.2-cp37-cp37m-manylinux1_x86_64.whl
+    when: numpy_installation_check.stdout == ""
 
   - name: "Downloading netifaces module for python"
     unarchive:
-      src: http://aptmirror.kaleyra.com/python/pypi/netifaces-0.10.9.tar.gz
+      src: ../roles/vm-deploy/files/linux/pythonlibs/netifaces-0.11.0.tar.gz
       dest: /tmp/
-      remote_src: yes
+    when: netifaces_installation_check.stdout == ""
 
   - name: "Installing netifaces"
     shell: python3.7 setup.py install
     args:
       chdir: /tmp/netifaces-0.10.9/
+    when: netifaces_installation_check.stdout == ""
 
   #------------------------+
   # killing server if is up|
@@ -72,7 +85,7 @@
     when: use_mirror==false
 
   - name: "If use mirror is set to true, download installer from a mirror"
-    shell: "wget -P /dev/shm/pybootd/images/{{vm-os}} --recursive --no-parent -nH --cut-dirs=8 --reject html,tmp {{mirror}}"
+    shell: "wget -P /dev/shm/pybootd/images/{{vm_os}} --recursive --no-parent -nH --cut-dirs=8 --reject html,tmp {{mirror}}"
     when: use_mirror==true
 
   - name: "Uploading Preseed file"
