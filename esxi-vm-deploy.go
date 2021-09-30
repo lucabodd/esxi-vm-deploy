@@ -283,6 +283,7 @@ func main() {
 	}
 
 	//use bool var in order to track in ansible wether to use a mirror or upload images
+	use_mirror:=false
 	if mirror == "" {
 		use_mirror:=false
 	} else {
