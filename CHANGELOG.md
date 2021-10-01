@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.10] - 2021-09-30
+## [2.0.0] - 2021-09-30
 ### Changed
 - Renamed virtual machine flags with shorter names, removing 'vm-' prefix
 - Installer images location/structure

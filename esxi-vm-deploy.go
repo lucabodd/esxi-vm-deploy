@@ -286,7 +286,7 @@ func main() {
 	if use_default_mirror {
 		switch vm_os {
 		case "debian11-64":
-			mirror="http://ftp.nl.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/debian-installer/"
+			mirror="http://ftp.nl.debian.org/debian/dists/bullseye/main/installer-amd64/current/images/netboot/debian-installer/"
 		case "debian10-64":
 			mirror="http://ftp.nl.debian.org/debian/dists/buster/main/installer-amd64/current/images/netboot/debian-installer/"
 		case "debian9-64":
