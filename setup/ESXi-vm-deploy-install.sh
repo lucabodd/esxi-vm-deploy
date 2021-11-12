@@ -1,7 +1,10 @@
-sudo apt-get install ansible
-wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
-tar -xvf go1.14.4.linux-amd64.tar.gz
-sudo mv go /usr/local
+!#/bin/bash
+# check if ansible is installed
+if [ $(dpkg-query -W -f='${Status}' ansible 2>/dev/null | grep -c "ok installed") -eq 0 ];
+then
+  apt install -y ansible;
+fi
+wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz && tar -xvf go1.14.4.linux-amd64.tar.gz -C /usr/local
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
